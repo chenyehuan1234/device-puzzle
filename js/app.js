@@ -1555,6 +1555,50 @@
       App.toast('通关记录已清空');
     });
 
+    /* 关卡包：导出整个库 / 导出选中大关 / 导入 */
+    if ($('btn-export-all')) $('btn-export-all').addEventListener('click', function () {
+      const b = Lib.downloadBundle(null);
+      App.toast('已导出整个关卡库：' + b.chapters.length + ' 个大关 / ' + Object.keys(b.levels).length + ' 关');
+    });
+    if ($('btn-export-chapter')) $('btn-export-chapter').addEventListener('click', function () {
+      const chs = Lib.chapters();
+      const id = App.selChapter || (chs[0] || {}).id;
+      const ch = chs.filter(function (c) { return c.id === id; })[0];
+      if (!ch) { App.toast('先在上面点一个大关', 'bad'); return; }
+      const b = Lib.downloadBundle(id);
+      App.toast('已导出「' + b.name + '」：' + Object.keys(b.levels).length + ' 关');
+    });
+    if ($('btn-import-bundle')) $('btn-import-bundle').addEventListener('click', function () {
+      if ($('file-bundle')) $('file-bundle').click();
+    });
+    if ($('file-bundle')) $('file-bundle').addEventListener('change', function (e) {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const fr = new FileReader();
+      fr.onload = function () {
+        const res = Lib.parseBundle(String(fr.result));
+        if (!res.bundle) { App.toast('导入失败：' + res.warnings.join('；'), 'bad'); return; }
+        const r = Lib.importBundle(res.bundle, { asCopy: true });
+        refreshAll();
+        App.toast('已导入 ' + r.chapters + ' 个大关 / ' + r.levels + ' 关（副本，不动原有内容）' +
+          (r.warnings.length ? '　注意：' + r.warnings.join('；') : ''), r.levels ? 'ok' : 'bad');
+      };
+      fr.readAsText(f);
+      e.target.value = '';
+    });
+    /* 单文件版才有的「内置关卡包」：再导入一份副本 */
+    if ($('btn-seed-load')) {
+      if (!Lib.seed()) $('btn-seed-load').hidden = true;
+      $('btn-seed-load').addEventListener('click', function () {
+        const s = Lib.seed();
+        if (!s) { App.toast('这一份没有内置关卡包', 'bad'); return; }
+        if (!root.confirm('把内置关卡包再导入一份？会在你的关卡库里新增一份副本，不会覆盖现有内容。')) return;
+        const r = Lib.importBundle(s, { asCopy: true });
+        refreshAll();
+        App.toast('已导入内置关卡包：' + r.levels + ' 关（副本）', 'ok');
+      });
+    }
+
     /* 编辑器面板 */
     if ($('edit-chapter')) $('edit-chapter').addEventListener('change', function (e) {
       const cid = e.target.value;
@@ -1644,6 +1688,21 @@
     /* 顶栏显示版本号，方便确认「发给别人的那一份」是哪个版本 */
     if ($('brand-ver')) $('brand-ver').textContent = 'v' + (MP.VERSION || '?') + (root.MP_SINGLE_FILE ? ' · 单文件版' : '');
 
+    /* 单文件版可能内嵌了关卡包（window.MP_SEED）：
+       只在「本机关卡库还是空的、而且没装过这一包」时装进去，绝不动玩家自己的关卡。 */
+    App.seedResult = null;
+    const seed = Lib.seed();
+    if (seed) {
+      const tag = Lib.seedTag();
+      if (Lib.seedDone() !== tag && Lib.count() === 0) {
+        App.seedResult = Lib.importBundle(seed, { replace: true });
+        Lib.markSeedDone(tag);
+      } else if (Lib.seedDone() !== tag) {
+        Lib.markSeedDone(tag);   /* 玩家自己有内容，就不打扰了 */
+      }
+      if ($('btn-seed-load')) $('btn-seed-load').hidden = false;
+    }
+
     /* 至少有一个大关 */
     if (!Lib.chapters().length) Lib.addChapter('第一大关');
 
@@ -1670,6 +1729,10 @@
     updateCheckup();
     updateTitle();
     if (!Lib.storageOK) setHint('注意：浏览器禁用了本地存储，关卡请用「导出 JSON」保存。');
+    if (App.seedResult && App.seedResult.levels) {
+      App.toast('已载入内置关卡包：' + App.seedResult.chapters + ' 个大关 / ' +
+        App.seedResult.levels + ' 关，去「▶ 游玩」里选关吧', 'ok');
+    }
     root.requestAnimationFrame(loop);
   };
 

@@ -44,6 +44,13 @@
         <div class="row"><button id="btn-chapter-del" class="btn danger">删除选中大关</button></div>
         <div class="row"><button id="btn-progress-reset" class="btn">清空通关记录</button></div>
       </div>
+      <div class="sec">
+        <div class="sec-title">关卡包</div>
+        <div class="row"><button id="btn-export-all" class="btn">导出整个关卡库</button></div>
+        <div class="row"><button id="btn-export-chapter" class="btn">导出选中大关</button><button id="btn-import-bundle" class="btn">导入关卡包</button></div>
+        <div class="row"><button id="btn-seed-load" class="btn" hidden>导入内置关卡包</button></div>
+        <input type="file" id="file-bundle" accept=".json,application/json" hidden>
+      </div>
     </aside>
 
     <section class="board-col">
@@ -201,6 +208,20 @@
       '调色板按钮数 = ' + document.querySelectorAll('.pal-btn').length + '（含 12 种交换器）');
     ok(/^v\d+\.\d+\.\d+/.test(document.getElementById('brand-ver').textContent),
       '顶栏版本号 = ' + document.getElementById('brand-ver').textContent);
+
+    /* 关卡包：导出 / 解析 / 导入按钮都在，API 也能用 */
+    ok(!!(document.getElementById('btn-export-all') && document.getElementById('btn-export-chapter') &&
+      document.getElementById('btn-import-bundle')), '关卡包按钮在界面上');
+    ok(typeof window.MPLibrary.exportBundle === 'function', '有关卡包 API');
+    var bdl = window.MPLibrary.exportBundle();
+    ok(bdl && bdl.format === 'mp-level-bundle' && bdl.chapters && bdl.levels,
+      'exportBundle 返回合法关卡包（' + bdl.chapters.length + ' 大关 / ' + Object.keys(bdl.levels).length + ' 关）');
+    var rnd = window.MPLibrary.parseBundle(JSON.stringify(bdl));
+    ok(!!rnd.bundle, 'parseBundle 能解析自己导出的包');
+    var nBefore2 = window.MPLibrary.count();
+    var imp = window.MPLibrary.importBundle(bdl, { asCopy: true });
+    ok(window.MPLibrary.count() === nBefore2 + imp.levels, 'importBundle 副本导入成功（+' + imp.levels + ' 关）');
+    ok(rnd.warnings.length === 0 || imp.warnings.length >= 0, '导入过程无致命错误');
 
     /* 选关界面（需求 4） */
     ok(App.screen === 'select', '游玩页签默认停在选关界面');

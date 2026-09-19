@@ -154,6 +154,15 @@ Lib.put(MP.buildLevel({
   devices: [{ x: 5, y: 2, type: 'push', s: 'L' }],
 }));
 
+/* 模拟「单文件版内嵌了关卡包」：这时候库里已经有东西了，init 不应该动它 */
+globalThis.MP_SEED = {
+  format: 'mp-level-bundle', version: 1, name: '冒烟内置包', exportedAt: '2026-01-01',
+  chapters: [{ id: 'SMOKE_CH', name: '内置大关', levels: ['SMOKE_L1'] }],
+  levels: {
+    SMOKE_L1: MP.buildLevel({ id: 'SMOKE_L1', name: '内置关卡', w: 5, h: 3, map: ['.....', '..sS.', '.....'] }),
+  },
+};
+
 let threw = null;
 try {
   docStub.readyState = 'complete';
@@ -202,6 +211,13 @@ ok(!!App, 'MPApp 存在');
 ok(App.canvas && App.ctx, 'canvas 与 2d context 已取得');
 ok(App.mode === 'play', '默认进入游玩模式');
 ok(App.level && App.level.name === '测试关卡', '默认载入关卡库里的第一关');
+/* 单文件版内嵌关卡包：库里已经有东西时，绝不能动玩家的关卡 */
+ok(Lib.seed() !== null, '读到了内置关卡包（MP_SEED）');
+eq(Lib.count(), 1, '库里已有内容 → 没有装内置关卡包');
+ok(!Lib.get('SMOKE_L1'), '内置关卡没有被塞进库');
+ok(Lib.seedDone().indexOf('冒烟内置包') === 0, '但记住了这一包已经处理过：' + Lib.seedDone());
+ok(globalThis.document.getElementById('btn-seed-load').hidden === false, '有内置包时「导入内置关卡包」按钮可见');
+ok(typeof Lib.exportBundle === 'function' && typeof Lib.importBundle === 'function', '关卡包 API 存在');
 
 (async function main() {
   await frames(3);

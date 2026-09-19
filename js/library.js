@@ -300,6 +300,118 @@
     return L;
   };
 
+  /* ---------------------------------------------------------------- 关卡包 */
+  /* 「关卡包」= 一份可以搬来搬去的 JSON：{ format, version, name, chapters, levels }
+     用途：
+       1. 编辑器「导出整个关卡库 / 导出选中大关」→ 存成文件，换台机器导入
+       2. 打包单文件版时内嵌进去（window.MP_SEED）→ 发给朋友就是一份带关卡的完整游戏 */
+  Lib.BUNDLE_FORMAT = 'mp-level-bundle';
+
+  Lib.exportBundle = function (chapterId, name) {
+    const d = loadDb();
+    const chapters = [];
+    const levels = {};
+    d.chapters.forEach(function (c) {
+      if (chapterId && c.id !== chapterId) return;
+      const ids = c.levels.filter(function (id) { return !!d.levels[id]; });
+      if (!ids.length && !chapterId) return;   /* 全库导出时跳过空大关，包干净一点 */
+      chapters.push({ id: c.id, name: c.name, levels: ids.slice() });
+      ids.forEach(function (id) { levels[id] = MP.cloneLevel(d.levels[id]); });
+    });
+    return {
+      format: Lib.BUNDLE_FORMAT,
+      version: 1,
+      name: name || (chapters.length === 1 ? chapters[0].name : '我的关卡库'),
+      exportedAt: new Date().toISOString().slice(0, 10),
+      chapters: chapters,
+      levels: levels,
+    };
+  };
+
+  /* 解析一段文本成关卡包。也接受「直接是一关」的 JSON（自动包成一个大关）。 */
+  Lib.parseBundle = function (text) {
+    let raw;
+    try { raw = JSON.parse(text); }
+    catch (e) { return { bundle: null, warnings: ['JSON 解析失败：' + e.message] }; }
+    if (Array.isArray(raw)) raw = raw[0];
+    if (!raw || typeof raw !== 'object') return { bundle: null, warnings: ['不是合法的关卡包'] };
+
+    /* 单个关卡文件 → 包成 1 个大关的关卡包 */
+    if (raw.w && raw.cells) {
+      const one = Lib.normalize(raw);
+      if (!one.level) return { bundle: null, warnings: one.warnings };
+      const id = one.level.id || Lib.uid();
+      one.level.id = id;
+      return {
+        bundle: {
+          format: Lib.BUNDLE_FORMAT, version: 1, name: one.level.name || '导入的关卡',
+          chapters: [{ id: Lib.uid('ch'), name: '导入的关卡', levels: [id] }],
+          levels: (function () { const m = {}; m[id] = one.level; return m; })(),
+        },
+        warnings: one.warnings,
+      };
+    }
+
+    if (!raw.chapters || !raw.levels) return { bundle: null, warnings: ['缺少 chapters / levels，不像是关卡包'] };
+    const warn = [];
+    let lv = 0;
+    raw.chapters.forEach(function (c) {
+      if (!c || !Array.isArray(c.levels)) { warn.push('有的大关没有 levels，已跳过'); return; }
+      c.levels.forEach(function (id) { if (raw.levels[id]) lv++; });
+    });
+    if (!lv) warn.push('这个关卡包里没有任何关卡');
+    return { bundle: raw, warnings: warn };
+  };
+
+  /* 把关卡包写进库里。
+       opt.replace : 先清空整个库（用于「第一次打开就装内置关卡包」）
+       opt.asCopy  : 所有大关 / 关卡都发新 id，避免覆盖库里已有的东西 */
+  Lib.importBundle = function (bundle, opt) {
+    opt = opt || {};
+    const d = loadDb();
+    if (opt.replace) { d.chapters = []; d.levels = {}; }
+    const warn = [];
+    let nCh = 0, nLv = 0;
+    (bundle.chapters || []).forEach(function (bc) {
+      let ch = null;
+      if (!opt.asCopy && bc.id) {
+        ch = d.chapters.filter(function (c) { return c.id === bc.id; })[0];
+      }
+      if (!ch) {
+        ch = { id: (opt.asCopy || !bc.id) ? Lib.uid('ch') : bc.id, name: bc.name || '导入的大关', levels: [] };
+        d.chapters.push(ch);
+      }
+      nCh++;
+      (bc.levels || []).forEach(function (lid) {
+        const src = bundle.levels && bundle.levels[lid];
+        if (!src) { warn.push('关卡 ' + lid + ' 的数据缺失，已跳过'); return; }
+        const L = MP.cloneLevel(src);
+        L.id = (opt.asCopy || !lid || d.levels[lid]) ? Lib.uid() : lid;
+        L.chapter = ch.id;
+        L.updated = Date.now();
+        d.levels[L.id] = L;
+        ch.levels.push(L.id);
+        nLv++;
+      });
+    });
+    if (!d.chapters.length) d.chapters.push({ id: Lib.uid('ch'), name: '第一关', levels: [] });
+    persist();
+    return { chapters: nCh, levels: nLv, warnings: warn };
+  };
+
+  /* 内置关卡包（单文件版打包时塞进来的 window.MP_SEED） */
+  Lib.seed = function () {
+    const s = root.MP_SEED;
+    return (s && s.levels && s.chapters) ? s : null;
+  };
+  Lib.seedTag = function () {
+    const s = Lib.seed();
+    return s ? (String(s.name || 'seed') + '@' + String(s.exportedAt || '')) : '';
+  };
+  const SKEY = 'mp.seed.v1';
+  Lib.seedDone = function () { try { return root.localStorage.getItem(SKEY) || ''; } catch (e) { return ''; } };
+  Lib.markSeedDone = function (tag) { try { root.localStorage.setItem(SKEY, String(tag)); } catch (e) {} };
+
   /* ---------------------------------------------------------------- 序列化 */
   Lib.serialize = function (level) {
     const o = {
@@ -393,15 +505,26 @@
     return Lib.normalize(raw);
   };
 
-  Lib.download = function (level, filename) {
-    const text = Lib.serialize(level);
+  Lib.downloadText = function (text, filename) {
     const blob = new Blob([text], { type: 'application/json;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = (filename || level.name || 'level') + '.json';
+    a.download = filename || 'level.json';
     document.body.appendChild(a);
     a.click();
     setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 0);
+  };
+
+  Lib.download = function (level, filename) {
+    Lib.downloadText(Lib.serialize(level), (filename || level.name || 'level') + '.json');
+  };
+
+  /* 导出关卡包（整个库 / 某一个大关） */
+  Lib.downloadBundle = function (chapterId, filename) {
+    const b = Lib.exportBundle(chapterId);
+    const safe = String(b.name || '关卡包').replace(/[\\/:*?"<>|]/g, '_');
+    Lib.downloadText(JSON.stringify(b, null, 1), (filename || safe) + '.json');
+    return b;
   };
 
 })(typeof globalThis !== 'undefined' ? globalThis : window);
