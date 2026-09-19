@@ -10,7 +10,7 @@
   const MP = {};
   root.MPCore = MP;
 
-  MP.VERSION = '0.4.0';
+  MP.VERSION = '0.5.0';
 
   /* ---------------------------------------------------------------------------
    * 1. 基础常量
@@ -94,6 +94,23 @@
     ul_ur: 'ur_dr', ur_dr: 'dl_dr', dl_dr: 'ul_dl', ul_dl: 'ul_ur',
     ul_dr: 'dl_ur', dl_ur: 'ul_dr',
   };
+  /* 逆时针转 90°（上表的逆）——旋转器逆时针转时用它 */
+  MP.SWAP_CCW = (function () {
+    const m = {};
+    for (const k in MP.SWAP_CW) m[MP.SWAP_CW[k]] = k;
+    return m;
+  })();
+  /* 把交换器转 90°：cw=true 顺时针，false 逆时针 */
+  MP.rotateSwap = function (s, cw) {
+    const t = cw ? MP.SWAP_CW[s] : MP.SWAP_CCW[s];
+    return t || s;
+  };
+  /* 从 from 转到 to 是顺时针(+1)还是逆时针(-1)——动画靠它决定图标往哪边转 */
+  MP.swapDelta = function (from, to) {
+    if (MP.SWAP_CW[from] === to) return 1;
+    if (MP.SWAP_CCW[from] === to) return -1;
+    return 1;
+  };
 
   /* 可变活塞状态字符串："方向:模式"，例如 "R:push" / "U:pull" */
   MP.vpDir = function (s) { return String(s).split(':')[0]; };
@@ -164,7 +181,7 @@
 
   D.rotate = {
     key: 'rotate', name: '旋转器', color: '#fbbf24', glyph: 'rotate',
-    tip: '把上下左右四格的内容整体转一格（顺时针 / 逆时针）。四格中有墙或越界 → 整体不动。',
+    tip: '把上下左右四格的内容整体转一格（顺时针 / 逆时针）。转过去的交换器会跟着换向；四格中有墙或越界 → 整体不动。',
     states: ['cw', 'ccw'],
     stateName: function (s) { return s === 'cw' ? '顺时针' : '逆时针'; },
     rotate: function (s) { return s === 'cw' ? 'ccw' : 'cw'; },

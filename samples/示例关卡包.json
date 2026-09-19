@@ -23,7 +23,8 @@
     "S2-2",
     "S2-3",
     "S2-4",
-    "S2-5"
+    "S2-5",
+    "S2-6"
    ]
   }
  ],
@@ -994,6 +995,157 @@
     [
      3,
      1
+    ]
+   ],
+   "chapter": "SCH2"
+  },
+  "S2-6": {
+   "id": "S2-6",
+   "name": "2-6 旋转器换向",
+   "w": 5,
+   "h": 5,
+   "note": "旋转器会把交换器的交换轴一起转过去：左边那台交换器转上去之后会变成「右斜」。",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ul_ur"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "rotate",
+      "s": "cw"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": [
+    [
+     2,
+     2
     ]
    ],
    "chapter": "SCH2"

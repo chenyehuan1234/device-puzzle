@@ -235,7 +235,64 @@ group('旋转器');
   dev(L4, 2, 1, 'push', 'R');
   ok(click(L4, 2, 2).ok, '旋转器可以旋转别的设备');
   eq(MP.itemAt(L4, 3, 2).type, 'push', '活塞被转到右方');
-  eq(MP.itemAt(L4, 3, 2).s, 'R', '设备的朝向字符串本身不随位置改变（只有修改器/换向交换器才改朝向）');
+  eq(MP.itemAt(L4, 3, 2).s, 'R', '活塞的朝向不随位置改变（要改朝向得用修改器 / 换向交换器）');
+
+  /* ---- 交换器：被旋转器转过去时，它的「交换轴」跟着一起转 ---- */
+  const L5 = blank(5, 5);
+  dev(L5, 2, 2, 'rotate', 'cw');
+  dev(L5, 2, 1, 'swap', 'ul_ur');           /* 上斜（贴着上边的一对） */
+  const a5 = click(L5, 2, 2);
+  ok(a5.ok, '顺时针转交换器成功');
+  eq(MP.itemAt(L5, 3, 2).type, 'swap', '交换器转到右边');
+  eq(MP.itemAt(L5, 3, 2).s, 'ur_dr', '顺时针：上斜 → 右斜（交换轴跟着转 90°）');
+  eq(a5.states.length, 1, '产生了一个状态变化');
+  eq(a5.states[0].at, MP.idx(L5, 3, 2), '状态变化的落点是交换器的新位置');
+  eq(a5.states[0].from, 'ul_ur', '带上了旧状态（动画要用）');
+
+  const L6 = blank(5, 5);
+  dev(L6, 2, 2, 'rotate', 'ccw');
+  dev(L6, 2, 1, 'swap', 'ul_ur');
+  const a6 = click(L6, 2, 2);
+  eq(MP.itemAt(L6, 1, 2).s, 'ul_dl', '逆时针：上斜 → 左斜（方向相反）');
+  eq(a6.states[0].from, 'ul_ur', '逆时针也带旧状态');
+
+  /* 上下 / 左右这种「正交对」转 90° 变成左右 / 上下 */
+  const L7 = blank(5, 5);
+  dev(L7, 2, 2, 'rotate', 'cw');
+  dev(L7, 1, 2, 'swap', 'ud');
+  click(L7, 2, 2);
+  eq(MP.itemAt(L7, 2, 1).s, 'lr', '顺时针：上下交换器 → 左右交换器');
+
+  /* 十二种状态挨个转一圈都要转得动，而且转四次回到自己 */
+  let spinBad = 0;
+  MP.SWAP_ORDER.forEach(function (s) {
+    let t = s;
+    for (let i = 0; i < 4; i++) t = MP.rotateSwap(t, true);
+    if (t !== s) spinBad++;
+    if (MP.rotateSwap(s, true) === s && s !== '') spinBad++;      /* 至少要变一次 */
+    if (MP.rotateSwap(MP.rotateSwap(s, true), false) !== s) spinBad++;
+  });
+  eq(spinBad, 0, '12 种交换器顺逆时针互逆、转四次回到自己');
+
+  /* 一个环里放两台交换器：两台都要跟着转 */
+  const L8 = blank(5, 5);
+  dev(L8, 2, 2, 'rotate', 'cw');
+  dev(L8, 2, 1, 'swap', 'ud');
+  dev(L8, 2, 3, 'swap', 'lr');
+  const a8 = click(L8, 2, 2);
+  eq(a8.states.length, 2, '两台交换器都产生了状态变化');
+  eq(MP.itemAt(L8, 3, 2).s, 'lr', '上面那台转到右边并换向');
+  eq(MP.itemAt(L8, 1, 2).s, 'ud', '下面那台转到左边并换向');
+
+  /* 换向交换器 / 修改器这些「非交换器」不被带动（保持原样） */
+  const L9 = blank(6, 5);
+  dev(L9, 2, 2, 'rotate', 'cw');
+  dev(L9, 2, 1, 'switch', 'v');
+  dev(L9, 3, 2, 'modifier', 'U');
+  const a9 = click(L9, 2, 2);
+  eq(a9.states.length, 0, '换向交换器 / 修改器不产生状态变化');
+  eq(MP.itemAt(L9, 3, 2).s, 'v', '换向交换器朝向不变');
+  eq(MP.itemAt(L9, 2, 3).s, 'U', '修改器朝向不变');
 }
 
 /* ==========================================================================

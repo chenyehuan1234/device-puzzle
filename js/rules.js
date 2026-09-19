@@ -182,17 +182,32 @@
         if (cells.some(function (c) { return !c; })) return fail('周围四格有一格越出棋盘', idxs);
         if (cells.some(function (c) { return c.t === WALL; })) return fail('周围四格有一格是墙', idxs);
 
+        const cw = (s === 'cw');
         const moves = [];
+        const states = [];
+        let turned = 0;
         for (let i = 0; i < 4; i++) {
           const src = cells[i];
           if (!src.item) continue;
-          const j = (s === 'cw') ? (i + 1) % 4 : (i + 3) % 4;
+          const j = cw ? (i + 1) % 4 : (i + 3) % 4;
           moves.push({
             from: idxs[i], to: idxs[j], item: src.item,
-            orbit: { cx: x, cy: y, from: i, cw: s === 'cw' },
+            orbit: { cx: x, cy: y, from: i, cw: cw },
           });
+          /* 交换器被转过去的时候，它那条「交换轴」跟着一起转 ——
+             方向跟旋转器一致：顺时针转的交换器也顺时针换向，逆时针同理。
+             （其它设备（活塞 / 修改器 / 旋转器…）的朝向不动，要改朝向用修改器或换向交换器） */
+          if (MP.isDevice(src.item) && src.item.type === 'swap') {
+            const ns = MP.rotateSwap(src.item.s, cw);
+            if (ns !== src.item.s) {
+              states.push({ at: idxs[j], s: ns, from: src.item.s, byRotator: true });
+              turned++;
+            }
+          }
         }
-        return ok({ moves: moves, affects: idxs });
+        const r = ok({ moves: moves, states: states, affects: idxs });
+        if (turned) r.note = turned + ' 台交换器跟着' + (cw ? '顺时针' : '逆时针') + '换了方向';
+        return r;
       }
 
       /* ---------------- 活塞家族 ---------------- */

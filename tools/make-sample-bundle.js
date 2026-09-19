@@ -92,11 +92,24 @@ const LEVELS = [
     '......',
   ], [{ x: 1, y: 1, type: 'modifier', s: 'R' }, { x: 3, y: 1, type: 'push', s: 'U' }],
     [[1, 1], [3, 1]], '修改器把右边的活塞从「朝上」转成「朝右」，再点活塞把正方形推上目标。'),
+
+  level('S2-6', '2-6 旋转器换向', 5, 5, [
+    '.....',
+    '..C..',
+    '.....',
+    '.....',
+    '.....',
+  ], [{ x: 2, y: 2, type: 'rotate', s: 'cw' }], [[2, 2]],
+    '旋转器会把交换器的交换轴一起转过去：左边那台交换器转上去之后会变成「右斜」。'),
 ];
+
+/* 2-6：上格放一台交换器、左格放一个圆形（转过去正好落到目标上） */
+LEVELS[LEVELS.length - 1].cells[MP.idx(LEVELS[LEVELS.length - 1], 2, 1)].item = MP.device('swap', 'ul_ur');
+LEVELS[LEVELS.length - 1].cells[MP.idx(LEVELS[LEVELS.length - 1], 1, 2)].item = { k: 'circle' };
 
 const CHAPTERS = [
   { id: 'SCH1', name: '第一大关 · 入门', levels: ['S1-1', 'S1-2', 'S1-3', 'S1-4'] },
-  { id: 'SCH2', name: '第二大关 · 机关', levels: ['S2-1', 'S2-2', 'S2-3', 'S2-4', 'S2-5'] },
+  { id: 'SCH2', name: '第二大关 · 机关', levels: ['S2-1', 'S2-2', 'S2-3', 'S2-4', 'S2-5', 'S2-6'] },
 ];
 
 /* ---------------------------------------------------------------- 自校验 */

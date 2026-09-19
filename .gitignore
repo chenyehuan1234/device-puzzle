@@ -8,6 +8,10 @@ tmp-*.html
 # 打包产物（跑 build.cmd 随时能重新生成）
 dist/
 
+# 关卡库文件的临时备份（tools/clean-library-file.js 生成的）
+关卡库.bak.json
+*.bak.json
+
 # 系统 / 编辑器垃圾
 Thumbs.db
 desktop.ini

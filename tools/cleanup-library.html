@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>清理自检留下的测试数据</title>
+<style>
+  body { background:#0b0e14; color:#e6edf7; font:13px/1.6 system-ui,"Microsoft YaHei",sans-serif; padding:18px; }
+  pre { white-space:pre-wrap; }
+  .ok { color:#34d399; } .bad { color:#f87171; } .warn { color:#fcd34d; }
+</style>
+</head>
+<body>
+<h3>清理自检（probe）写进这个浏览器 profile 的测试数据</h3>
+<p>用浏览器打开本页面即可；<b>不带 <code>#go</code> 时只做「体检」，一个字节都不会改</b>；
+   地址后面加上 <code>#go</code> 才会真的删。</p>
+<pre id="report">RUNNING</pre>
+
+<script src="../js/core.js"></script>
+<script src="../js/library.js"></script>
+<script>
+(function () {
+  'use strict';
+  var out = [];
+  function line(s) { out.push(s); }
+  function finish(tag) {
+    out.push('\n<<<' + tag + '>>>');
+    document.getElementById('report').textContent = out.join('\n');
+  }
+
+  var GO = (location.hash === '#go');
+
+  /* 自检脚本自己造出来的大关名（确定是垃圾） */
+  var JUNK_NAMES = ['探针大关'];
+
+  var Lib = window.MPLibrary;
+  var chapters = Lib.chapters();
+
+  if (!chapters.length) { line('这个 profile 里没有关卡库（没什么要清的）'); finish('CLEAN'); return; }
+
+  var totalLv = Lib.count();
+  line('当前关卡库：' + chapters.length + ' 个大关 / ' + totalLv + ' 关\n');
+
+  /* ---- 判定垃圾 ----
+     1. 名字在 JUNK_NAMES 里
+     2. 和前面某个大关「同名 + 关卡名列表完全一样」→ 认定是自检 importBundle 拷出来的副本
+     3. 没有任何大关引用的孤儿关卡 */
+  function sig(ch) {
+    return ch.name + '||' + ch.levels.map(function (l) { return l.name; }).join('|');
+  }
+  var seen = {};
+  var junk = [];
+  chapters.forEach(function (ch, i) {
+    var s = sig(ch);
+    var why = '';
+    if (JUNK_NAMES.indexOf(ch.name) >= 0) why = '自检建的大关';
+    else if (seen[s] !== undefined) why = '和第 ' + (seen[s] + 1) + ' 个大关完全一样（自检拷出来的副本）';
+    if (why) junk.push({ ch: ch, why: why });
+    else seen[s] = i;
+  });
+
+  var referenced = {};
+  chapters.forEach(function (ch) {
+    if (junk.some(function (j) { return j.ch.id === ch.id; })) return;
+    ch.levels.forEach(function (l) { referenced[l.id] = 1; });
+  });
+  var allIds = Object.keys(window.localStorage.getItem('mp.library.v1') ?
+    JSON.parse(window.localStorage.getItem('mp.library.v1')).levels : {});
+
+  line('—— 大关清单 ——');
+  chapters.forEach(function (ch, i) {
+    var j = junk.filter(function (x) { return x.ch.id === ch.id; })[0];
+    line('  ' + (i + 1) + '. ' + ch.name + '（' + ch.levels.length + ' 关）' +
+      (j ? '  ← 垃圾：' + j.why : '  保留'));
+  });
+
+  var orphans = allIds.filter(function (id) { return !referenced[id] && !junk.some(function (j) {
+    return j.ch.levels.some(function (l) { return l.id === id; });
+  }); });
+  line('\n没有任何大关引用的孤儿关卡：' + orphans.length + ' 个');
+
+  line('\n—— 结论 ——');
+  if (!junk.length && !orphans.length) {
+    line('干净，没有自检留下的东西。');
+    finish('CLEAN');
+    return;
+  }
+  junk.forEach(function (j) {
+    line('  要删掉：' + j.ch.name + '（' + j.ch.levels.length + ' 关）— ' + j.why);
+  });
+  if (orphans.length) line('  要删掉：' + orphans.length + ' 个孤儿关卡');
+
+  if (!GO) {
+    line('\n（现在只是体检，什么都没改。确认上面这些确实都是垃圾后，');
+    line('  在地址栏后面加 #go 再打开一次就会真的删除。）');
+    finish('DRYRUN');
+    return;
+  }
+
+  junk.forEach(function (j) { Lib.removeChapter(j.ch.id); });
+  if (orphans.length) Lib.removeLevels(orphans);
+  line('\n✓ 已删除 ' + junk.length + ' 个大关、' + orphans.length + ' 个孤儿关卡。');
+  line('  现在剩下：' + Lib.chapters().length + ' 个大关 / ' + Lib.count() + ' 关');
+  finish('DONE');
+})();
+</script>
+</body>
+</html>

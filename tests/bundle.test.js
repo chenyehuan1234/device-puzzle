@@ -130,6 +130,16 @@ group('导入关卡包');
   eq(Lib.chapters().length, 1, '大关也只剩 1 个');
   ok(!!Lib.get('L1'), 'id 原样保留（这样通关进度也能对上）');
   ok(!Lib.get('L3'), '别的关卡被清掉了');
+
+  /* 批量删关卡（清理工具用） */
+  const mineA = Lib.blank(4, 4, '孤儿 1');
+  mineA.id = Lib.put(mineA);
+  const mineB = Lib.blank(4, 4, '孤儿 2');
+  mineB.id = Lib.put(mineB);
+  eq(Lib.count(), 4, '又加了两关');
+  eq(Lib.removeLevels([mineA.id, '不存在的 id']), 1, 'removeLevels 只删存在的');
+  eq(Lib.count(), 3, '少了一关');
+  eq(Lib.list().length, 3, '而且没有留下悬空引用');
 }
 
 /* ==========================================================================

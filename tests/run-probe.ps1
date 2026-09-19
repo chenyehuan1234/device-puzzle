@@ -16,12 +16,19 @@ $probeUrl = "file:///" + ($root -replace '\\', '/') + "/tests/probe.html"
 $dump = Join-Path $root "tests\dump.html"
 $err = Join-Path $root "tests\dump.err"
 
+# 一定要用一次性临时用户目录！
+# 否则无头 Chrome 会直接用你平时那个 profile 的 localStorage，
+# 自检建的「探针大关」就会写进你自己的关卡库里。
+$profile = Join-Path $env:TEMP ("mp-probe-" + [guid]::NewGuid().ToString('N'))
+
 Start-Process -FilePath $chrome -NoNewWindow -Wait -PassThru -ArgumentList @(
   "--headless=new", "--disable-gpu", "--allow-file-access-from-files",
+  "--user-data-dir=$profile",
   "--window-size=1400,900", "--virtual-time-budget=15000", "--dump-dom", $probeUrl
 ) -RedirectStandardOutput $dump -RedirectStandardError $err | Out-Null
 
 $txt = Get-Content $dump -Raw
+Remove-Item $profile -Recurse -Force -ErrorAction SilentlyContinue
 $m = [regex]::Match($txt, '(?s)<pre id="probe-out"[^>]*>(.*?)</pre>')
 if (-not $m.Success) { Write-Host "没有拿到探针结果（页面可能报错）" -ForegroundColor Red; exit 1 }
 

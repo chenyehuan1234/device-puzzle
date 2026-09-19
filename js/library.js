@@ -142,6 +142,22 @@
     persist();
   };
 
+  /* 批量删关卡（连带把大关里的引用摘掉） */
+  Lib.removeLevels = function (ids) {
+    const d = loadDb();
+    let n = 0;
+    (ids || []).forEach(function (id) {
+      if (!d.levels[id]) return;
+      delete d.levels[id];
+      n++;
+      d.chapters.forEach(function (c) {
+        c.levels = c.levels.filter(function (x) { return x !== id; });
+      });
+    });
+    if (n) persist();
+    return n;
+  };
+
   /* 新建大关 */
   Lib.addChapter = function (name) {
     const d = loadDb();

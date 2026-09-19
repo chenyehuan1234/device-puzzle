@@ -277,8 +277,69 @@ ok(typeof Lib.exportBundle === 'function' && typeof Lib.importBundle === 'functi
   ok(App.level.cells[MP.idx(App.level, 5, 2)].item.s === 'R', '冲突后设备状态不变');
 
   /* ==========================================================================
-   * 4. 九种设备的动画编排（沙盒）不抛异常
+   * 3.5 旋转器给交换器换向（含动画方向）
    * ======================================================================= */
+  group('旋转器给交换器换向 + 动画方向');
+  {
+    const LR = MP.newLevel(5, 5, '换向测试');
+    LR.cells[MP.idx(LR, 2, 2)].item = MP.device('rotate', 'cw');
+    LR.cells[MP.idx(LR, 2, 1)].item = MP.device('swap', 'ul_ur');   /* 上斜 */
+    App.setEditLevel(LR);
+    App.playtest();
+    await frames(2);
+    clickCell(2, 2);
+    ok(App.busy === true, '旋转器点击后进入动画');
+    const st = FX.items.filter(function (f) { return f.kind === 'state'; })[0];
+    const mv = FX.items.filter(function (f) { return f.kind === 'move'; })[0];
+    ok(!!mv && typeof mv.pos === 'function', '交换器有一个位移动画');
+    /* 绕旋转器中心走 1/4 圆弧：半径恒为 1（格），不是直线穿过去 */
+    let radOK = true, midUp = null;
+    [0.25, 0.5, 0.75].forEach(function (t) {
+      const p = mv.pos(t);
+      if (Math.abs(Math.hypot(p.x - 2, p.y - 2) - 1) > 0.01) radOK = false;
+    });
+    midUp = mv.pos(0.5);
+    ok(radOK, '交换器沿「以旋转器为圆心」的圆弧走（半径恒为 1）');
+    ok(midUp.x > 2.2 && midUp.y < 1.8, '顺时针：半途在右上方向（' + midUp.x.toFixed(2) + ',' + midUp.y.toFixed(2) + '）');
+    ok(!!st, '同时产生了状态过渡动画（图标换向）');
+    ok(!!st && Math.abs(st.delta - Math.PI / 2) < 1e-9, '顺时针：图标转 +90°（delta = ' + (st && st.delta) + '）');
+    ok(!!st && !!mv && st.dur === mv.dur, '状态动画和位移动画时长一致（' + (st && st.dur) + 's），不会先转完再飘过去');
+    await frames(40, 20);
+    eq(MP.itemAt(App.level, 3, 2).s, 'ur_dr', '落子后：交换器在右边，状态 = 右斜');
+
+    /* 逆时针：动画方向要反过来 */
+    const LR2 = MP.newLevel(5, 5, '换向测试·逆');
+    LR2.cells[MP.idx(LR2, 2, 2)].item = MP.device('rotate', 'ccw');
+    LR2.cells[MP.idx(LR2, 2, 1)].item = MP.device('swap', 'ul_ur');
+    App.setEditLevel(LR2);
+    App.playtest();
+    await frames(2);
+    clickCell(2, 2);
+    const st2 = FX.items.filter(function (f) { return f.kind === 'state'; })[0];
+    const mv2 = FX.items.filter(function (f) { return f.kind === 'move'; })[0];
+    ok(!!st2 && Math.abs(st2.delta + Math.PI / 2) < 1e-9, '逆时针：图标转 -90°（delta = ' + (st2 && st2.delta) + '）');
+    const mid2 = mv2 && mv2.pos(0.5);
+    ok(!!mid2 && mid2.x < 1.8 && mid2.y < 1.8, '逆时针：半途在左上方向（动画方向也跟着反了）');
+    await frames(40, 20);
+    eq(MP.itemAt(App.level, 1, 2).s, 'ul_dl', '落子后：交换器在左边，状态 = 左斜');
+
+    /* 活塞 / 修改器 / 换向交换器不被带动朝向 */
+    const LR3 = MP.newLevel(6, 5, '换向测试·其它设备');
+    LR3.cells[MP.idx(LR3, 2, 2)].item = MP.device('rotate', 'cw');
+    LR3.cells[MP.idx(LR3, 2, 1)].item = MP.device('push', 'R');
+    LR3.cells[MP.idx(LR3, 3, 2)].item = MP.device('modifier', 'U');
+    App.setEditLevel(LR3);
+    App.playtest();
+    await frames(2);
+    clickCell(2, 2);
+    ok(FX.items.filter(function (f) { return f.kind === 'state'; }).length === 0, '活塞 / 修改器没有状态过渡动画');
+    await frames(40, 20);
+    eq(MP.itemAt(App.level, 3, 2).s, 'R', '活塞朝向没变');
+    eq(MP.itemAt(App.level, 2, 3).s, 'U', '修改器朝向没变');
+    App.setMode('edit');
+  }
+
+
   group('沙盒：九种设备逐个点击');
   App.loadPlay('__sandbox__');
   await frames(2);

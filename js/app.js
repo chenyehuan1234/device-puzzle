@@ -107,7 +107,10 @@
       const b = MP.DIR_LIST.indexOf(MP.vpDir(toS));
       return ((b - a + 4) % 4) * Math.PI / 2;
     }
-    if (def.key === 'swap' || def.key === 'switch' || def.key === 'rotate') return Math.PI / 2;
+    /* 交换器：交换轴是真正的几何方向，所以按「从哪个状态转到哪个状态」判断正负
+       —— 旋转器顺时针转它就顺时针转，逆时针转它就逆时针转，图标才不会倒着抽一下 */
+    if (def.key === 'swap') return MP.swapDelta(fromS, toS) * Math.PI / 2;
+    if (def.key === 'switch' || def.key === 'rotate') return Math.PI / 2;
     const a = MP.DIR_LIST.indexOf(fromS), b = MP.DIR_LIST.indexOf(toS);
     if (a < 0 || b < 0) return Math.PI / 2;
     return ((b - a + 4) % 4) * Math.PI / 2;
@@ -115,8 +118,10 @@
 
   function buildFx(L, act, x, y) {
     const beam = !!act.beam;
+    /* 旋转器是「沿圆弧搬位置 + 顺便转朝向」，两段动画要对齐时长，不然会看到图标先转完再飘过去 */
+    const orbiting = (act.moves || []).some(function (m) { return !!m.orbit; });
 
-    /* 状态变化（朝向翻转 / 切换模式） */
+    /* 状态变化（朝向翻转 / 切换模式 / 被旋转器带着换向） */
     (act.states || []).forEach(function (st) {
       const c = L.cells[st.at];
       if (!c || !c.item) return;
@@ -125,7 +130,8 @@
         kind: 'state', item: c.item,
         fromS: st.from, toS: st.s, delta: delta,
         modeSwap: delta === null,
-        dur: beam ? 0.15 : 0.26, delay: beam ? 0.05 : 0,
+        dur: orbiting ? 0.30 : (beam ? 0.15 : 0.26),
+        delay: beam ? 0.05 : 0,
       });
     });
 
@@ -1019,6 +1025,8 @@
       '把每个<b>正方形</b>移到方形目标格、每个<b>圆形</b>移到圆形目标格，全部对上就通关（不限步数）。',
       '所有设备都是同一个操作方式：<b>鼠标点一下 = 触发一次</b>。',
       '<b>设备本身也是可操作对象</b>：活塞能推走设备、交换器能换设备、旋转器能转设备、修改器能改设备。',
+      '<b>旋转器</b>转动时，被它转过去的<b>交换器会跟着换向</b>：交换轴和旋转器同方向转 90°' +
+        '（上斜 →顺时针→ 右斜 →顺时针→ 下斜…）；其它设备的朝向不变，要改朝向请用修改器或换向交换器。',
       '<b>冲突则整体不动</b>：只要有一格越出棋盘 / 被占住 / 推不动，这一次点击就完全没有效果（连可变活塞也不会变形）。',
       '棋盘外沿就是边界：<b>这一版没有墙</b>，越界等同于以前撞墙。',
       '鼠标停在设备上会<b>预演</b>显示它作用到哪些格子（绿=可行，红=冲突）；点错了可以撤销。',

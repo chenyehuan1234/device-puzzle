@@ -558,6 +558,66 @@
 
   /* ---------------------------------------------------------------- 解法回放段 */
   function replayPhase() {
+    var MP = window.MPCore, App = window.MPApp, Lib = window.MPLibrary;
+
+    /* ---- 旋转器给交换器换向（真浏览器：图标方向 + 位移动画方向 + 落子结果） ---- */
+    function alphaAt(cv, ax, ay) {
+      return cv.getContext('2d').getImageData(ax, ay, 1, 1).data[3];
+    }
+    var gUL = window.MPRender.makeGlyphCanvas('swap', 'ul_ur', 40);
+    var gDR = window.MPRender.makeGlyphCanvas('swap', 'ur_dr', 40);
+    ok(alphaAt(gUL, 11, 11) > 0, '「上斜」交换器：左上方向画着线段');
+    ok(alphaAt(gDR, 11, 11) === 0, '「右斜」交换器：左上方向没有线段（确实是另一个方向）');
+    ok(alphaAt(gDR, 29, 11) > 0 && alphaAt(gDR, 29, 29) > 0, '「右斜」交换器：右上 / 右下都有线段');
+
+    function spinTest(ccw, expState, label, next) {
+      var LR = MP.newLevel(5, 5, label);
+      LR.cells[MP.idx(LR, 2, 2)].item = MP.device('rotate', ccw ? 'ccw' : 'cw');
+      LR.cells[MP.idx(LR, 2, 1)].item = MP.device('swap', 'ul_ur');
+      App.setMode('edit');
+      App.setEditLevel(LR);
+      App.playtest();
+      step(2);
+      var pc = center(2, 2);
+      mouse(pc.x, pc.y, 0, 1);
+      var st = null, mv = null;
+      window.MPFx.items.forEach(function (f) {
+        if (f.kind === 'state') st = f;
+        if (f.kind === 'move') mv = f;
+      });
+      var want = ccw ? -Math.PI / 2 : Math.PI / 2;
+      ok(!!st && Math.abs(st.delta - want) < 1e-9,
+        label + '：图标转 ' + (ccw ? '-90°' : '+90°') + '（delta = ' + (st && st.delta && st.delta.toFixed(3)) + '）');
+      var mid = mv && mv.pos(0.5);
+      var rad = mid ? Math.hypot(mid.x - 2, mid.y - 2) : 0;
+      ok(!!mid && Math.abs(rad - 1) < 0.02, label + '：沿旋转器圆心的圆弧走（半径 ' + rad.toFixed(3) + '）');
+      ok(!!mid && (ccw ? (mid.x < 1.8 && mid.y < 1.8) : (mid.x > 2.2 && mid.y < 1.8)),
+        label + '：半途方向在' + (ccw ? '左上' : '右上') + '（' + (mid && mid.x.toFixed(2)) + ',' + (mid && mid.y.toFixed(2)) + '）');
+      var shots = {};
+      for (var k = 0; k < 10; k++) { step(1); shots[JSON.stringify(stats())] = 1; }
+      ok(Object.keys(shots).length >= 4, label + '：动画期间画面连续变化（' + Object.keys(shots).length + ' 帧不同）');
+      step(60);
+      var found = null;
+      for (var y = 0; y < App.level.h; y++) {
+        for (var x = 0; x < App.level.w; x++) {
+          var it = MP.itemAt(App.level, x, y);
+          if (it && it.type === 'swap') found = { x: x, y: y, s: it.s };
+        }
+      }
+      ok(!!found && found.s === expState,
+        label + '：交换器落到 (' + (found && found.x) + ',' + (found && found.y) + ')，状态 = ' + (found && found.s));
+      /* 探针里整段是同步代码，微任务要等函数返回才会跑，
+         所以这里让出一次事件循环，让 App.busy 正常解锁，再跑下一段 */
+      setTimeout(next, 0);
+    }
+
+    spinTest(false, 'ur_dr', '顺时针', function () {
+      spinTest(true, 'ul_dl', '逆时针', solutionReplay);
+    });
+  }
+
+  /* ---------------------------------------------------------------- 解法回放 */
+  function solutionReplay() {
     var App = window.MPApp, Lib = window.MPLibrary;
     var L = Lib.get(probeSavedId);
     ok(!!L, '拿得到刚才编辑的那一关');
