@@ -12,6 +12,9 @@ dist/
 关卡库.bak.json
 *.bak.json
 
+# 旧关卡库备份归档（只留在本机，不进仓库、也不参与打包）
+backups/
+
 # 系统 / 编辑器垃圾
 Thumbs.db
 desktop.ini

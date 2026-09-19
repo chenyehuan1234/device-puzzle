@@ -311,7 +311,7 @@ git tag vX.Y.Z
 - 🎮 在线试玩：<https://chenyehuan1234.github.io/device-puzzle/>
 - 📦 源码仓库：<https://github.com/chenyehuan1234/device-puzzle>
 
-线上跑的是**带关卡的单文件版**（内联了关卡库，目前 3 大关 / 45 关），和自己跑 `build.cmd` 得到的那份完全一样。
+线上跑的是**带关卡的单文件版**（内联了关卡库，目前 5 大关 / 72 关），和自己跑 `build.cmd` 得到的那份完全一样。
 
 ### 改了东西之后怎么更新线上版本
 

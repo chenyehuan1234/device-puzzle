@@ -64,7 +64,46 @@
     "Lmu7tfuhu56c7",
     "Lmu7tgs4dgpl7",
     "Lmu7tvls96lp7",
-    "Lmu7tw2sac9pt"
+    "Lmu7tw2sac9pt",
+    "Lmu83r5grj369"
+   ]
+  },
+  {
+   "id": "chmu83t84p5z1b",
+   "name": "第四章",
+   "levels": [
+    "Lmu83tcnkfeml",
+    "Lmu83tv7dfy5f",
+    "Lmu83ucv8j0al",
+    "Lmu83urnruv31",
+    "Lmu83vixs8pqj",
+    "Lmu83w55drfhs",
+    "Lmu83wweuny8j",
+    "Lmu83xbkpr3x2",
+    "Lmu83xrjo8jgf",
+    "Lmu83y9yjbr1y",
+    "Lmu83yz8jcfc2",
+    "Lmu83zm5117az",
+    "Lmu843tcjb4qm",
+    "Lmu8447pzhu1v",
+    "Lmu844nczyg08",
+    "Lmu845gdh6ffz",
+    "Lmu846fvd2id8",
+    "Lmu847ymg372v",
+    "Lmu84bcmzqwge",
+    "Lmu84s2upp3k0",
+    "Lmu84ynnzt6eo",
+    "Lmu8528gwau9m"
+   ]
+  },
+  {
+   "id": "chmu85czuomjqw",
+   "name": "第五章",
+   "levels": [
+    "Lmu85d1665zjq",
+    "Lmu85prlvtxxa",
+    "Lmu85qk599i5z",
+    "Lmu86prtan831"
    ]
   }
  ],
@@ -4381,8 +4420,3188 @@
   "Lmu7tw2sac9pt": {
    "id": "Lmu7tw2sac9pt",
    "name": "3-22",
+   "w": 4,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "R:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "L:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789805115236
+  },
+  "Lmu83r5grj369": {
+   "id": "Lmu83r5grj369",
+   "name": "3-23",
    "w": 5,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "D:push"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ur_dr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "L:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789805148950
+  },
+  "Lmu83tcnkfeml": {
+   "id": "Lmu83tcnkfeml",
+   "name": "4-1",
+   "w": 1,
+   "h": 6,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805241907
+  },
+  "Lmu83tv7dfy5f": {
+   "id": "Lmu83tv7dfy5f",
+   "name": "4-2",
+   "w": 3,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805264798
+  },
+  "Lmu83ucv8j0al": {
+   "id": "Lmu83ucv8j0al",
+   "name": "4-3",
+   "w": 3,
+   "h": 8,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805283966
+  },
+  "Lmu83urnruv31": {
+   "id": "Lmu83urnruv31",
+   "name": "4-4",
+   "w": 4,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805319318
+  },
+  "Lmu83vixs8pqj": {
+   "id": "Lmu83vixs8pqj",
+   "name": "4-5",
+   "w": 5,
+   "h": 6,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ul_ur"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805348105
+  },
+  "Lmu83w55drfhs": {
+   "id": "Lmu83w55drfhs",
+   "name": "4-6",
+   "w": 5,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "R:push"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805383439
+  },
+  "Lmu83wweuny8j": {
+   "id": "Lmu83wweuny8j",
+   "name": "4-7",
+   "w": 1,
+   "h": 6,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "U"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805403089
+  },
+  "Lmu83xbkpr3x2": {
+   "id": "Lmu83xbkpr3x2",
+   "name": "4-8",
+   "w": 3,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805423789
+  },
+  "Lmu83xrjo8jgf": {
+   "id": "Lmu83xrjo8jgf",
+   "name": "4-9",
+   "w": 3,
+   "h": 8,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805447653
+  },
+  "Lmu83y9yjbr1y": {
+   "id": "Lmu83y9yjbr1y",
+   "name": "4-10",
+   "w": 6,
+   "h": 3,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805480409
+  },
+  "Lmu83yz8jcfc2": {
+   "id": "Lmu83yz8jcfc2",
+   "name": "4-11",
+   "w": 6,
+   "h": 3,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "switch",
+      "s": "v"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805510088
+  },
+  "Lmu83zm5117az": {
+   "id": "Lmu83zm5117az",
+   "name": "4-12",
+   "w": 5,
+   "h": 3,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "switch",
+      "s": "h"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805706061
+  },
+  "Lmu843tcjb4qm": {
+   "id": "Lmu843tcjb4qm",
+   "name": "4-13",
+   "w": 3,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "U"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805724688
+  },
+  "Lmu8447pzhu1v": {
+   "id": "Lmu8447pzhu1v",
+   "name": "4-14",
+   "w": 3,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "dl_dr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805744954
+  },
+  "Lmu844nczyg08": {
+   "id": "Lmu844nczyg08",
+   "name": "4-15",
+   "w": 2,
+   "h": 3,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "U"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805782557
+  },
+  "Lmu845gdh6ffz": {
+   "id": "Lmu845gdh6ffz",
+   "name": "4-16",
+   "w": 3,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805828562
+  },
+  "Lmu846fvd2id8": {
+   "id": "Lmu846fvd2id8",
+   "name": "4-17",
+   "w": 3,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789805899519
+  },
+  "Lmu847ymg372v": {
+   "id": "Lmu847ymg372v",
+   "name": "4-18",
+   "w": 3,
+   "h": 6,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789806057649
+  },
+  "Lmu84bcmzqwge": {
+   "id": "Lmu84bcmzqwge",
+   "name": "4-19",
+   "w": 5,
+   "h": 6,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789806838121
+  },
+  "Lmu84s2upp3k0": {
+   "id": "Lmu84s2upp3k0",
+   "name": "4-20",
+   "w": 5,
+   "h": 6,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789807145026
+  },
+  "Lmu84ynnzt6eo": {
+   "id": "Lmu84ynnzt6eo",
+   "name": "4-21",
+   "w": 4,
    "h": 4,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789807311958
+  },
+  "Lmu8528gwau9m": {
+   "id": "Lmu8528gwau9m",
+   "name": "4-22",
+   "w": 6,
+   "h": 7,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ul_dl"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spull",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": [
+    [
+     0,
+     5
+    ],
+    [
+     3,
+     5
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     2,
+     6
+    ],
+    [
+     3,
+     5
+    ],
+    [
+     2,
+     6
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     3,
+     5
+    ],
+    [
+     2,
+     6
+    ]
+   ],
+   "chapter": "chmu83t84p5z1b",
+   "updated": 1789807761044
+  },
+  "Lmu85d1665zjq": {
+   "id": "Lmu85d1665zjq",
+   "name": "5-1",
+   "w": 5,
+   "h": 6,
    "note": "",
    "cells": [
     {
@@ -4438,7 +7657,53 @@
     {
      "t": 0,
      "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
      "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
     },
     {
      "t": 0,
@@ -4458,12 +7723,42 @@
     {
      "t": 0,
      "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
      "item": null
     },
     {
      "t": 0,
      "goal": null,
      "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "R"
+     }
     },
     {
      "t": 0,
@@ -4487,8 +7782,695 @@
     }
    ],
    "solution": null,
-   "chapter": "chmu7sjbaxvtgo",
-   "updated": 1789788548890
+   "chapter": "chmu85czuomjqw",
+   "updated": 1789808409848
+  },
+  "Lmu85prlvtxxa": {
+   "id": "Lmu85prlvtxxa",
+   "name": "5-2",
+   "w": 7,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "R:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "L:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "L:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "R:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu85czuomjqw",
+   "updated": 1789808446837
+  },
+  "Lmu85qk599i5z": {
+   "id": "Lmu85qk599i5z",
+   "name": "5-3",
+   "w": 4,
+   "h": 6,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "L:push"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "L:push"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "U:push"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu85czuomjqw",
+   "updated": 1789810089729
+  },
+  "Lmu86prtan831": {
+   "id": "Lmu86prtan831",
+   "name": "5-4",
+   "w": 6,
+   "h": 8,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "spush",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "modifier",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "R"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu85czuomjqw",
+   "updated": 1789810780715
   }
  }
 }
