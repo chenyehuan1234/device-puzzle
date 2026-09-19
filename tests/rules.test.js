@@ -239,9 +239,9 @@ group('旋转器');
 }
 
 /* ==========================================================================
- * 6. 六种交换器
+ * 6. 八种交换器
  * ======================================================================= */
-group('六种交换器');
+group('八种交换器');
 {
   function swapTest(state, ax, ay, bx, by) {
     const L = blank(7, 7);
@@ -264,6 +264,45 @@ group('六种交换器');
   ok(r.a.ok && MP.itemAt(r.L, 2, 4).k === 'square' && MP.itemAt(r.L, 2, 2).k === 'circle', 'ul_dl：左上↔左下');
   r = swapTest('ur_dr', 4, 2, 4, 4);
   ok(r.a.ok && MP.itemAt(r.L, 4, 4).k === 'square' && MP.itemAt(r.L, 4, 2).k === 'circle', 'ur_dr：右上↔右下');
+  /* 新增的两种：两条对角线（X 形） */
+  r = swapTest('ul_dr', 2, 2, 4, 4);
+  ok(r.a.ok && MP.itemAt(r.L, 4, 4).k === 'square' && MP.itemAt(r.L, 2, 2).k === 'circle', 'ul_dr：左上↔右下（主对角）');
+  ok(MP.itemAt(r.L, 4, 2) === null && MP.itemAt(r.L, 2, 4) === null, 'ul_dr 不碰另外两个角（右上 / 左下）');
+  r = swapTest('dl_ur', 2, 4, 4, 2);
+  ok(r.a.ok && MP.itemAt(r.L, 4, 2).k === 'square' && MP.itemAt(r.L, 2, 4).k === 'circle', 'dl_ur：左下↔右上（副对角）');
+  ok(MP.itemAt(r.L, 2, 2) === null && MP.itemAt(r.L, 4, 4) === null, 'dl_ur 不碰另外两个角（左上 / 右下）');
+
+  /* 八种必须是八个互不相同的方位对，而且都相对中心对称 */
+  eq(MP.SWAP_ORDER.length, 8, '交换器共 8 种状态');
+  eq(MP.DEVICES.swap.states.length, 8, '设备目录里的状态数也是 8');
+  {
+    const NEI = {};
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        if (dx || dy) NEI[dx + ',' + dy] = 1;
+      }
+    }
+    const seen = {};
+    let dup = 0, bad = 0, center = 0, edge = 0, odd = 0;
+    MP.SWAP_ORDER.forEach(function (s) {
+      const p = MP.SWAP_PAIRS[s];
+      if (!p) { bad++; return; }
+      const k0 = p[0][0] + ',' + p[0][1], k1 = p[1][0] + ',' + p[1][1];
+      if (!NEI[k0] || !NEI[k1]) bad++;                       /* 必须是紧邻格 */
+      const key = [k0, k1].sort().join('|');
+      if (seen[key]) dup++;
+      seen[key] = 1;
+      const sx = p[0][0] + p[1][0], sy = p[0][1] + p[1][1];
+      if (sx === 0 && sy === 0) center++;                    /* 关于设备中心对称（上下/左右/两条对角） */
+      else if (Math.abs(sx) + Math.abs(sy) === 2) edge++;    /* 贴着设备一侧（上斜/下斜/左斜/右斜） */
+      else odd++;
+    });
+    ok(bad === 0, '每一对都是设备紧邻的两个格子');
+    ok(dup === 0, '8 种方位两两不同');
+    eq(center, 4, '4 种关于设备中心对称（上下 / 左右 / 主对角 / 副对角）');
+    eq(edge, 4, '4 种贴着设备一侧（上斜 / 下斜 / 左斜 / 右斜）');
+    eq(odd, 0, '没有奇怪的方位对');
+  }
 
   // 交换器自己不动
   const L = blank(7, 7);
@@ -411,6 +450,7 @@ group('修改器');
     ['swap', 'ud', 'lr'], ['swap', 'lr', 'ud'],
     ['swap', 'ul_ur', 'ur_dr'], ['swap', 'ur_dr', 'dl_dr'],
     ['swap', 'dl_dr', 'ul_dl'], ['swap', 'ul_dl', 'ul_ur'],
+    ['swap', 'ul_dr', 'dl_ur'], ['swap', 'dl_ur', 'ul_dr'],
     ['vpush', 'R:pull', 'D:pull'],
   ];
   cases.forEach(function (cs) {

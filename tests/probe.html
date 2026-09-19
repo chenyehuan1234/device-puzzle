@@ -8,7 +8,7 @@
 <body>
 <div id="app">
   <header class="topbar">
-    <div class="brand"><span class="logo"></span>机关谜题<span class="tiny">probe</span></div>
+    <div class="brand"><span class="logo"></span>机关谜题<span class="tiny">probe</span><span class="tiny" id="brand-ver"></span></div>
     <div class="tabs">
       <button class="tab is-on" id="tab-play" data-mode="play">▶ 游玩</button>
       <button class="tab" id="tab-edit" data-mode="edit">✎ 关卡编辑器</button>
@@ -172,6 +172,10 @@
     if (extra) for (var k in extra) init[k] = extra[k];
     cv.dispatchEvent(new MouseEvent('mousedown', init));
   }
+  function wheel(dy) {
+    var cv = document.getElementById('board');
+    cv.dispatchEvent(new WheelEvent('wheel', { deltaY: dy, bubbles: true, cancelable: true }));
+  }
   function key(k, extra) {
     var init = { key: k, bubbles: true };
     if (extra) for (var kk in extra) init[kk] = extra[kk];
@@ -187,7 +191,10 @@
 
     /* 布局 */
     ok(document.getElementById('board').width > 0, 'canvas 位图已建立');
-    ok(document.querySelectorAll('.pal-btn').length >= 40, '调色板按钮数 = ' + document.querySelectorAll('.pal-btn').length);
+    ok(document.querySelectorAll('.pal-btn').length >= 46,
+      '调色板按钮数 = ' + document.querySelectorAll('.pal-btn').length + '（含 8 种交换器）');
+    ok(/^v\d+\.\d+\.\d+/.test(document.getElementById('brand-ver').textContent),
+      '顶栏版本号 = ' + document.getElementById('brand-ver').textContent);
 
     /* 选关界面（需求 4） */
     ok(App.screen === 'select', '游玩页签默认停在选关界面');
@@ -353,6 +360,48 @@
     mouse(p4.x, p4.y, 1, 4);
     ok(App.brush.kind === 'piece' && App.brush.piece === 'circle', '中键吸取到圆形');
     App.paint(6, 5, true);   /* 擦掉这个圆形，保证后面这一关是可通关的 */
+
+    /* 需求：滚轮 —— 设备换状态，正方形/圆形/方形目标/圆形目标 四种循环 */
+    App.setBrush({ kind: 'piece', piece: 'square' });
+    wheel(120);
+    ok(App.brush.kind === 'piece' && App.brush.piece === 'circle', '滚轮：正方形 → 圆形');
+    wheel(120);
+    ok(App.brush.kind === 'goal' && App.brush.goal === 'square', '滚轮：圆形 → 方形目标');
+    wheel(120);
+    ok(App.brush.kind === 'goal' && App.brush.goal === 'circle', '滚轮：方形目标 → 圆形目标');
+    wheel(120);
+    ok(App.brush.kind === 'piece' && App.brush.piece === 'square', '滚轮：圆形目标 → 绕回正方形');
+    wheel(-120);
+    ok(App.brush.kind === 'goal' && App.brush.goal === 'circle', '反向滚轮回去');
+    App.setBrush({ kind: 'device', type: 'swap', s: 'ur_dr' });
+    wheel(120);
+    ok(App.brush.s === 'ul_dr', '滚轮：设备换状态（ur_dr → ul_dr，新的主对角交换器）');
+    wheel(120);
+    ok(App.brush.s === 'dl_ur', '滚轮：ur_dr → ul_dr → dl_ur（新的两种都能滚到）');
+
+    /* 需求：调色板里能看到两种新交换器 */
+    var diagBtns = 0;
+    Array.prototype.forEach.call(document.querySelectorAll('.pal-btn .lbl'), function (el) {
+      if (el.textContent.indexOf('主对角') >= 0 || el.textContent.indexOf('副对角') >= 0) diagBtns++;
+    });
+    ok(diagBtns === 2, '调色板里有「主对角 / 副对角」两个新交换器（找到 ' + diagBtns + ' 个）');
+
+    /* 新交换器的图标：主对角交换器的两条线段应当沿「左上—右下」，不该出现在另一条对角线上 */
+    App.setBrush({ kind: 'device', type: 'swap', s: 'ul_dr' });
+    App.paint(2, 6, false);
+    App.hover = null;
+    step(3);
+    var cD = center(2, 6), rr = window.MPApp.view.cell * 0.24;
+    var onMain = px(cD.x - rr, cD.y - rr);
+    var onAnti = px(cD.x + rr, cD.y - rr);
+    ok(onMain !== onAnti, '主对角交换器只画在左上—右下方向（' + onMain + ' vs ' + onAnti + '）');
+    App.setBrush({ kind: 'device', type: 'swap', s: 'dl_ur' });
+    App.paint(2, 6, false);
+    step(3);
+    var a2 = px(cD.x - rr, cD.y - rr);
+    var b2 = px(cD.x + rr, cD.y - rr);
+    ok(a2 !== b2, '副对角交换器的图标方向不一样（' + a2 + ' vs ' + b2 + '）');
+    App.paint(2, 6, true);
 
     /* 需求 6：覆盖绘制要有交叉淡出（落笔动画带着旧内容） */
     App.setBrush({ kind: 'device', type: 'push', s: 'R' });

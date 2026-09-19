@@ -349,6 +349,43 @@ ok(App.level && App.level.name === '测试关卡', '默认载入关卡库里的�
   ok(App.brush.kind === 'none', '编辑器里 Esc = 放下笔刷');
   App.setBrush({ kind: 'device', type: 'rotate', s: 'cw' });
 
+  /* —— 需求：图形 / 目标笔刷也用滚轮轮换 —— */
+  group('滚轮：设备换状态，图形/目标四种循环');
+  App.setBrush({ kind: 'piece', piece: 'square' });
+  App.cycleBrush(1);
+  ok(App.brush.kind === 'piece' && App.brush.piece === 'circle', '正方形 —滚轮→ 圆形');
+  App.cycleBrush(1);
+  ok(App.brush.kind === 'goal' && App.brush.goal === 'square', '圆形 —滚轮→ 方形目标');
+  App.cycleBrush(1);
+  ok(App.brush.kind === 'goal' && App.brush.goal === 'circle', '方形目标 —滚轮→ 圆形目标');
+  App.cycleBrush(1);
+  ok(App.brush.kind === 'piece' && App.brush.piece === 'square', '圆形目标 —滚轮→ 绕回正方形');
+  App.cycleBrush(-1);
+  ok(App.brush.kind === 'goal' && App.brush.goal === 'circle', '反着滚回到圆形目标');
+  App.setBrush({ kind: 'floor' });
+  App.cycleBrush(1);
+  ok(App.brush.kind === 'floor', '空地：滚轮不改变笔刷');
+  App.dropBrush(true);
+  App.cycleBrush(1);
+  ok(App.brush.kind === 'none', '空手：滚轮也不改变笔刷');
+
+  /* —— 需求：新增两种对角线交换器 —— */
+  group('新增两种对角交换器（左上↔右下 / 左下↔右上）');
+  eq(MP.DEVICES.swap.states.length, 8, '交换器共 8 种状态');
+  const swapBtns = paletteBrushes().filter(function (b) {
+    return b.kind === 'device' && b.type === 'swap';
+  });
+  eq(swapBtns.length, 8, '调色板里交换器有 8 个按钮');
+  App.setBrush({ kind: 'device', type: 'swap', s: 'ur_dr' });
+  App.cycleBrush(1);
+  eq(App.brush.s, 'ul_dr', '滚轮能滚到新增的「主对角」');
+  App.cycleBrush(1);
+  eq(App.brush.s, 'dl_ur', '再滚到「副对角」');
+  App.cycleBrush(1);
+  eq(App.brush.s, 'ud', '绕回开头');
+  ok(MP.SWAP_NAME.ul_dr.indexOf('主对角') === 0 && MP.SWAP_NAME.dl_ur.indexOf('副对角') === 0,
+    '两种新交换器有名字：' + MP.SWAP_NAME.ul_dr + ' / ' + MP.SWAP_NAME.dl_ur);
+
   /* —— 需求：最小尺寸不再是 3 格 —— */
   group('最小尺寸：1×1 也要能用');
   const tiny = Lib.blank(1, 1, 'tiny');

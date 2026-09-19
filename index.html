@@ -10,7 +10,7 @@
 <div id="app">
 
   <header class="topbar">
-    <div class="brand"><span class="logo"></span>机关谜题<span class="tiny">框架 + 关卡编辑器</span></div>
+    <div class="brand"><span class="logo"></span>机关谜题<span class="tiny">框架 + 关卡编辑器</span><span class="tiny" id="brand-ver"></span></div>
 
     <div class="tabs">
       <button class="tab is-on" id="tab-play" data-mode="play">▶ 游玩</button>
@@ -162,7 +162,7 @@
       <div class="panel" id="panel-edit" hidden>
         <div class="sec">
           <div class="sec-title">笔刷
-            <small>左键画 / 右键有东西的格子=擦掉 / 右键空地=放下笔刷 / 中键或 Alt+左键吸取</small>
+            <small>左键画 / 右键有东西=擦掉、空地=放下笔刷 / 中键吸取 / 滚轮换状态</small>
           </div>
           <div id="palette" class="palette"></div>
         </div>
@@ -179,8 +179,8 @@
             <div><kbd>B</kbd> 试玩中返回编辑</div>
             <div><kbd>Ctrl+S</kbd> 保存并新建下一关（同尺寸）</div>
             <div><kbd>Ctrl+Z</kbd> 撤销　<kbd>R</kbd> 转笔刷（Shift 反向）</div>
-            <div><kbd>滚轮</kbd> 换设备朝向　<kbd>中键</kbd> 吸取</div>
-            <div><kbd>右键</kbd> 有东西=擦掉这一格（含目标）　空地=<b>放下笔刷</b></div>
+            <div><kbd>滚轮</kbd> 设备换朝向；<b>正方形/圆形/方形目标/圆形目标之间循环</b></div>
+            <div><kbd>中键</kbd> 吸取　<kbd>右键</kbd> 有东西=擦掉这一格（含目标）　空地=<b>放下笔刷</b></div>
             <div><kbd>Esc</kbd> 放下笔刷　<kbd>1</kbd>空地 <kbd>2</kbd>正方形 <kbd>3</kbd>圆形 <kbd>4</kbd>方形目标 <kbd>5</kbd>圆形目标 <kbd>0</kbd>取消目标</div>
           </div>
         </div>

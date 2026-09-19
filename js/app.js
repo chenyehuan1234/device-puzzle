@@ -444,7 +444,7 @@
     const fr = $('foot-right');
     if (fr) fr.textContent = App.mode === 'play'
       ? '点击设备 = 触发一次　·　空格 撤回　·　R 重开　·　B 返回　·　Esc 选关'
-      : 'S 试玩　·　Ctrl+S 保存并新建下一关　·　右键有东西=擦掉/空地=放下笔刷　·　中键吸取';
+      : 'S 试玩　·　Ctrl+S 保存并新建下一关　·　滚轮换朝向/图形　·　右键=擦掉/放下笔刷　·　中键吸取';
   }
 
   function setHint(txt) {
@@ -579,15 +579,37 @@
     sound('tick');
   };
 
+  /* 图形 / 目标这四种笔刷也用滚轮轮换（正方形 → 圆形 → 方形目标 → 圆形目标 → 循环）。
+     设备有它自己的状态列表，各滚各的。 */
+  const SHAPE_RING = [
+    { kind: 'piece', piece: 'square' },
+    { kind: 'piece', piece: 'circle' },
+    { kind: 'goal', goal: 'square' },
+    { kind: 'goal', goal: 'circle' },
+  ];
+  function ringIndex(b) {
+    for (let i = 0; i < SHAPE_RING.length; i++) {
+      if (sameBrush(SHAPE_RING[i], b)) return i;
+    }
+    return -1;
+  }
+
   App.cycleBrush = function (dir) {
     const b = App.brush;
-    if (b.kind !== 'device') return;
-    const def = MP.DEVICES[b.type];
-    const i = def.states.indexOf(b.s);
-    const n = def.states.length;
-    b.s = def.states[(i + (dir > 0 ? 1 : n - 1)) % n];
-    markPalette();
-    sound('tick');
+    if (b.kind === 'device') {
+      const def = MP.DEVICES[b.type];
+      const i = def.states.indexOf(b.s);
+      const n = def.states.length;
+      b.s = def.states[(i + (dir > 0 ? 1 : n - 1)) % n];
+      markPalette();
+      sound('tick');
+      return;
+    }
+    const k = ringIndex(b);
+    if (k < 0) return;                       /* 空地 / 取消目标 / 空手：滚轮不管 */
+    const m = SHAPE_RING.length;
+    const next = SHAPE_RING[(k + (dir > 0 ? 1 : m - 1)) % m];
+    App.setBrush(JSON.parse(JSON.stringify(next)));
   };
 
   App.resizeLevel = function (w, h) {
@@ -882,6 +904,7 @@
       '大关右边的 <b>＋</b> 就在这个大关里新建一关，新关卡名字自动是 <b>1-3</b> 这样的编号；「大关管理」可以新建 / 改名 / 删除大关。',
       '画布操作：<b>左键</b>画、<b>右键</b>点有东西的格子=擦干净（按住可连续擦）、<b>右键点空地 / Esc</b> = <b>放下手中的笔刷</b>（空手状态左键不画东西）、<b>中键</b>（或 Alt+左键）吸取、<b>滚轮</b>换朝向、<b>R</b> 转笔刷。',
       '键盘：<b>1</b> 空地、<b>2</b> 正方形、<b>3</b> 圆形、<b>4</b> 方形目标、<b>5</b> 圆形目标、<b>0</b> 取消目标。',
+      '<b>滚轮</b>：拿着设备时换它的朝向 / 状态；拿着<b>正方形 / 圆形 / 方形目标 / 圆形目标</b>时，在这四种之间循环。',
       '<b>S</b> = 一键试玩当前内容（不落库，按 <b>B</b> 回来继续画）。',
       '<b>Ctrl+S</b> = 保存这一关并<b>自动新建下一关</b>，尺寸沿用当前关；当前关是空的就只保存不新建。',
       '改尺寸后没有任何外墙要铺：<b>棋盘外沿就是边界</b>。',
@@ -1447,6 +1470,9 @@
     App.canvas = $('board');
     App.ctx = App.canvas.getContext('2d');
     App.cssW = 900; App.cssH = 640;
+
+    /* 顶栏显示版本号，方便确认「发给别人的那一份」是哪个版本 */
+    if ($('brand-ver')) $('brand-ver').textContent = 'v' + (MP.VERSION || '?') + (root.MP_SINGLE_FILE ? ' · 单文件版' : '');
 
     /* 至少有一个大关 */
     if (!Lib.chapters().length) Lib.addChapter('第一大关');
