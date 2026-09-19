@@ -1178,6 +1178,17 @@
     if (App.editLevel && App.editLevel.chapter) sel.value = App.editLevel.chapter;
   }
 
+  /* 把内置关卡包导入本机（副本，永远不覆盖已有内容） */
+  App.importSeed = function (noConfirm) {
+    const s = Lib.seed();
+    if (!s) { App.toast('这一份没有内置关卡包', 'bad'); return null; }
+    if (!noConfirm && !root.confirm('把内置关卡包导入到本机关卡库？\n\n会新增一份副本，不会覆盖你已有的关卡。')) return null;
+    const r = Lib.importBundle(s, { asCopy: true });
+    refreshAll();
+    App.toast('已导入内置关卡包：' + r.levels + ' 关（副本）', 'ok');
+    return r;
+  };
+
   function renderPlaySelect() {
     const host = $('play-chapters');
     if (!host) return;
@@ -1187,6 +1198,24 @@
       $('progress-info').textContent = total
         ? ('共 ' + total + ' 关，已通关 ' + done + ' 关')
         : '还没有关卡，去编辑器画一关吧';
+    }
+
+    /* 内嵌关卡包说明：让「这一份自带多少关 / 我本机有多少关」一眼看清 */
+    if (App.seed && !App.seed.applied) {
+      const note = mk('div', 'seed-note');
+      note.appendChild(mk('b', null, '这一份自带了关卡包「' + App.seed.name + '」：' +
+        App.seed.chapters + ' 个大关 / ' + App.seed.levels + ' 关。'));
+      note.appendChild(mk('div', 'sn-body',
+        '不过你这个浏览器里已经有 ' + total + ' 关了自己的关卡（同一个浏览器里所有本地页面共用一份存档），' +
+        '所以内置包没有覆盖它 —— 下面显示的是你本机的内容。'));
+      const row = mk('div', 'sn-row');
+      const b = mk('button', 'btn', '导入内置关卡包（副本，不会覆盖）');
+      b.addEventListener('click', function () { App.importSeed(); });
+      row.appendChild(b);
+      const tip = mk('span', 'hint', '想当「新玩家」试试这一份：用浏览器的隐私 / 无痕窗口打开它。');
+      row.appendChild(tip);
+      note.appendChild(row);
+      host.appendChild(note);
     }
     const chapters = Lib.chapters();
     const hasAny = chapters.some(function (c) { return c.levels.length; });
@@ -1597,14 +1626,7 @@
     /* 单文件版才有的「内置关卡包」：再导入一份副本 */
     if ($('btn-seed-load')) {
       if (!Lib.seed()) $('btn-seed-load').hidden = true;
-      $('btn-seed-load').addEventListener('click', function () {
-        const s = Lib.seed();
-        if (!s) { App.toast('这一份没有内置关卡包', 'bad'); return; }
-        if (!root.confirm('把内置关卡包再导入一份？会在你的关卡库里新增一份副本，不会覆盖现有内容。')) return;
-        const r = Lib.importBundle(s, { asCopy: true });
-        refreshAll();
-        App.toast('已导入内置关卡包：' + r.levels + ' 关（副本）', 'ok');
-      });
+      $('btn-seed-load').addEventListener('click', function () { App.importSeed(); });
     }
 
     /* 编辑器面板 */
@@ -1697,17 +1719,32 @@
     if ($('brand-ver')) $('brand-ver').textContent = 'v' + (MP.VERSION || '?') + (root.MP_SINGLE_FILE ? ' · 单文件版' : '');
 
     /* 单文件版可能内嵌了关卡包（window.MP_SEED）：
-       只在「本机关卡库还是空的、而且没装过这一包」时装进去，绝不动玩家自己的关卡。 */
-    App.seedResult = null;
+       只在「本机关卡库还是空的、而且没装过这一包」时装进去，绝不动玩家自己的关卡。
+       注意：同一个浏览器里所有 file:// 页面是**共享 localStorage** 的，
+       所以你自己电脑上打开打包好的文件，看到的仍然是你本机的关卡库 —— 这是浏览器行为，不是打包读盘。 */
+    App.seed = null;
     const seed = Lib.seed();
     if (seed) {
       const tag = Lib.seedTag();
+      let seedLevels = 0;
+      (seed.chapters || []).forEach(function (c) {
+        (c.levels || []).forEach(function (id) { if (seed.levels[id]) seedLevels++; });
+      });
+      let applied = false;
       if (Lib.seedDone() !== tag && Lib.count() === 0) {
-        App.seedResult = Lib.importBundle(seed, { replace: true });
+        Lib.importBundle(seed, { replace: true });
+        applied = true;
         Lib.markSeedDone(tag);
       } else if (Lib.seedDone() !== tag) {
         Lib.markSeedDone(tag);   /* 玩家自己有内容，就不打扰了 */
       }
+      App.seed = {
+        name: seed.name || '内置关卡包',
+        chapters: (seed.chapters || []).length,
+        levels: seedLevels,
+        applied: applied,
+        localBefore: Lib.count(),
+      };
       if ($('btn-seed-load')) $('btn-seed-load').hidden = false;
     }
 
@@ -1737,9 +1774,9 @@
     updateCheckup();
     updateTitle();
     if (!Lib.storageOK) setHint('注意：浏览器禁用了本地存储，关卡请用「导出 JSON」保存。');
-    if (App.seedResult && App.seedResult.levels) {
-      App.toast('已载入内置关卡包：' + App.seedResult.chapters + ' 个大关 / ' +
-        App.seedResult.levels + ' 关，去「▶ 游玩」里选关吧', 'ok');
+    if (App.seed && App.seed.applied) {
+      App.toast('已载入内置关卡包：' + App.seed.chapters + ' 个大关 / ' +
+        App.seed.levels + ' 关，去「▶ 游玩」里选关吧', 'ok');
     }
     root.requestAnimationFrame(loop);
   };

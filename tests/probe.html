@@ -526,6 +526,7 @@
       var cards = document.querySelectorAll('.level-card');
       ok(cards.length >= 1, '选关界面有 ' + cards.length + ' 张关卡卡片');
       ok(document.querySelectorAll('.level-card.is-cleared').length >= 1, '通关的关卡卡片有 ✓ 标记');
+      ok(document.getElementById('play-chapters').querySelectorAll('*').length >= 1, '选关界面内容非空');
 
       /* 需求 3：卡片上的缩略小地图 */
       var thumbs = document.querySelectorAll('.level-card .lc-thumb');
@@ -551,6 +552,20 @@
       chkS.dispatchEvent(new Event('change', { bubbles: true }));
       ok(window.MPSfx.enabled === true, '重新打开音效开关生效');
       ok(wasOn === true, '音效默认是开的');
+
+      /* 内嵌关卡包 + 本机已有内容时，选关界面必须给个明白说明 */
+      /* （打包好的那一份在干净 profile 里是「自动装好」，这里手动模拟「本机已经有东西」） */
+      window.MPApp.seed = { name: '测试包', chapters: 1, levels: 3, applied: false };
+      window.MPApp.gotoSelect();
+      step(1);
+      var note = document.querySelector('.seed-note');
+      ok(!!note, '本机已有内容时，选关界面显示「内置关卡包」说明条');
+      ok(!!note && note.textContent.indexOf('测试包') >= 0, '说明条里写出了包名');
+      ok(!!note && note.textContent.indexOf('没有覆盖') >= 0, '说明条解释了为什么显示的是本机内容');
+      var seedBtn = note && note.querySelector('button');
+      ok(!!seedBtn && seedBtn.textContent.indexOf('导入') >= 0, '说明条里有「导入内置关卡包」按钮');
+      ok(document.getElementById('progress-info').textContent.indexOf('共') >= 0,
+        '顶部仍显示本机关卡数：' + document.getElementById('progress-info').textContent);
 
       replayPhase();
     }, 30);

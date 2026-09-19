@@ -593,11 +593,16 @@ ok(typeof Lib.exportBundle === 'function' && typeof Lib.importBundle === 'functi
   ok(cards && cards.children.length >= 1, '选关界面渲染出了大关区块');
 
   /* 需求 3：每张关卡卡片上有缩略小地图 */
-  const firstGrid = cards.children[0].children[1];
-  const firstCard = firstGrid && firstGrid.children[0];
-  ok(firstCard && firstCard.children[0] && firstCard.children[0].className.indexOf('lc-thumb') >= 0,
+  const blocks = cards.children.filter(function (c) { return c.className.indexOf('chapter-block') >= 0; });
+  const firstCard = blocks.length ? blocks[0].children[1].children[0] : null;
+  ok(!!firstCard && firstCard.children[0] && firstCard.children[0].className.indexOf('lc-thumb') >= 0,
     '关卡卡片上有缩略小地图 canvas');
   ok(globalThis.MPCore.analyze && typeof R.makeThumbCanvas === 'function', '缩略图 API 存在');
+  /* 内嵌了关卡包、但本机已有内容时，选关界面要给个明白说明 */
+  const seedNote = cards.children.filter(function (c) { return c.className.indexOf('seed-note') >= 0; })[0];
+  ok(!!seedNote, '选关界面顶部有「内置关卡包」说明条');
+  ok(!!seedNote && seedNote.children.some(function (n) { return n.className.indexOf('sn-row') >= 0; }),
+    '说明条里有「导入内置关卡包」按钮行');
 
   /* 通关一关 → 进度记录 → Enter 进下一关 */
   const idA = Lib.list()[0].id;

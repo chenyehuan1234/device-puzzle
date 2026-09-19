@@ -265,3 +265,13 @@ kbd {
   background: #0e1420; border: 1px solid rgba(255,255,255,0.06);
 }
 .select-tools { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+
+/* ---------------------------------------------------------------- 内置关卡包说明 */
+.seed-note {
+  background: linear-gradient(180deg, #17222f, #131a26);
+  border: 1px solid #355074; border-left: 3px solid var(--accent);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; font-size: 13px;
+}
+.seed-note b { color: var(--accent); }
+.seed-note .sn-body { color: var(--dim); font-size: 12.5px; margin-top: 4px; }
+.seed-note .sn-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }

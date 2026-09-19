@@ -2,105 +2,120 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>清理自检留下的测试数据</title>
+<title>体检 / 清理关卡库</title>
 <style>
-  body { background:#0b0e14; color:#e6edf7; font:13px/1.6 system-ui,"Microsoft YaHei",sans-serif; padding:18px; }
-  pre { white-space:pre-wrap; }
-  .ok { color:#34d399; } .bad { color:#f87171; } .warn { color:#fcd34d; }
+  body { background:#0b0e14; color:#e6edf7; font:14px/1.7 system-ui,"Microsoft YaHei",sans-serif; padding:20px; max-width:900px; margin:0 auto; }
+  pre { white-space:pre-wrap; background:#121722; border:1px solid #263145; border-radius:10px; padding:14px; }
+  button { background:#1a2231; color:#e6edf7; border:1px solid #263145; border-radius:9px; padding:9px 14px; cursor:pointer; font-size:13px; margin-right:8px; }
+  button:hover { border-color:#3d4d6b; }
+  button.danger { color:#fecaca; border-color:#52323a; }
+  .ok { color:#34d399; } .bad { color:#f87171; } .warn { color:#fcd34d; } .dim { color:#8fa0bb; }
 </style>
 </head>
 <body>
-<h3>清理自检（probe）写进这个浏览器 profile 的测试数据</h3>
-<p>用浏览器打开本页面即可；<b>不带 <code>#go</code> 时只做「体检」，一个字节都不会改</b>；
-   地址后面加上 <code>#go</code> 才会真的删。</p>
-<pre id="report">RUNNING</pre>
+<h3>关卡库体检</h3>
+<p>这个页面读的是<b>你现在这个浏览器</b>里存的关卡库（和游戏页面同一份数据）。<br>
+   <span class="dim">用来检查有没有被自检脚本写进去的测试大关。默认只体检，点按钮才会删。</span></p>
+<pre id="report">读取中…</pre>
+<div id="actions"></div>
 
 <script src="../js/core.js"></script>
 <script src="../js/library.js"></script>
 <script>
 (function () {
   'use strict';
-  var out = [];
-  function line(s) { out.push(s); }
-  function finish(tag) {
-    out.push('\n<<<' + tag + '>>>');
-    document.getElementById('report').textContent = out.join('\n');
-  }
-
-  var GO = (location.hash === '#go');
+  var Lib = window.MPLibrary;
+  var junk = [];          /* 判定为垃圾的大关 */
+  var orphans = [];       /* 没有任何大关引用的孤儿关卡 */
+  var AUTO = (location.hash === '#go');
 
   /* 自检脚本自己造出来的大关名（确定是垃圾） */
-  var JUNK_NAMES = ['探针大关'];
+  var JUNK_NAMES = ['探针大关', '冒烟关卡', 'CtrlS 测试', '空关卡', '缩放测试'];
 
-  var Lib = window.MPLibrary;
-  var chapters = Lib.chapters();
+  function analyze() {
+    var chapters = Lib.chapters();
+    junk = []; orphans = [];
+    var out = [];
+    if (!chapters.length) { out.push('这个浏览器里没有关卡库（没什么要清的）。'); return { text: out.join('\n'), empty: true }; }
 
-  if (!chapters.length) { line('这个 profile 里没有关卡库（没什么要清的）'); finish('CLEAN'); return; }
+    var raw = null;
+    try { raw = JSON.parse(localStorage.getItem('mp.library.v1') || 'null'); } catch (e) {}
+    var allIds = raw && raw.levels ? Object.keys(raw.levels) : [];
 
-  var totalLv = Lib.count();
-  line('当前关卡库：' + chapters.length + ' 个大关 / ' + totalLv + ' 关\n');
+    out.push('本机关卡库：' + chapters.length + ' 个大关 / ' + Lib.count() + ' 关');
+    out.push('');
 
-  /* ---- 判定垃圾 ----
-     1. 名字在 JUNK_NAMES 里
-     2. 和前面某个大关「同名 + 关卡名列表完全一样」→ 认定是自检 importBundle 拷出来的副本
-     3. 没有任何大关引用的孤儿关卡 */
-  function sig(ch) {
-    return ch.name + '||' + ch.levels.map(function (l) { return l.name; }).join('|');
-  }
-  var seen = {};
-  var junk = [];
-  chapters.forEach(function (ch, i) {
-    var s = sig(ch);
-    var why = '';
-    if (JUNK_NAMES.indexOf(ch.name) >= 0) why = '自检建的大关';
-    else if (seen[s] !== undefined) why = '和第 ' + (seen[s] + 1) + ' 个大关完全一样（自检拷出来的副本）';
-    if (why) junk.push({ ch: ch, why: why });
-    else seen[s] = i;
-  });
+    function sig(ch) { return ch.name + '||' + ch.levels.map(function (l) { return l.name; }).join('|'); }
+    var seen = {};
+    out.push('—— 大关清单 ——');
+    chapters.forEach(function (ch, i) {
+      var s = sig(ch);
+      var why = '';
+      if (JUNK_NAMES.indexOf(ch.name) >= 0) why = '自检建的大关';
+      else if (seen[s] !== undefined) why = '和第 ' + (seen[s] + 1) + ' 个大关完全一样（自检拷出来的副本）';
+      else seen[s] = i;
+      if (why) junk.push({ ch: ch, why: why });
+      out.push('  ' + (i + 1) + '. ' + ch.name + '（' + ch.levels.length + ' 关）' +
+        (why ? '   ← 建议删除：' + why : ''));
+    });
 
-  var referenced = {};
-  chapters.forEach(function (ch) {
-    if (junk.some(function (j) { return j.ch.id === ch.id; })) return;
-    ch.levels.forEach(function (l) { referenced[l.id] = 1; });
-  });
-  var allIds = Object.keys(window.localStorage.getItem('mp.library.v1') ?
-    JSON.parse(window.localStorage.getItem('mp.library.v1')).levels : {});
+    var referenced = {};
+    chapters.forEach(function (ch) {
+      if (junk.some(function (j) { return j.ch.id === ch.id; })) return;
+      ch.levels.forEach(function (l) { referenced[l.id] = 1; });
+    });
+    orphans = allIds.filter(function (id) {
+      if (referenced[id]) return false;
+      return !junk.some(function (j) { return j.ch.levels.some(function (l) { return l.id === id; }); });
+    });
 
-  line('—— 大关清单 ——');
-  chapters.forEach(function (ch, i) {
-    var j = junk.filter(function (x) { return x.ch.id === ch.id; })[0];
-    line('  ' + (i + 1) + '. ' + ch.name + '（' + ch.levels.length + ' 关）' +
-      (j ? '  ← 垃圾：' + j.why : '  保留'));
-  });
-
-  var orphans = allIds.filter(function (id) { return !referenced[id] && !junk.some(function (j) {
-    return j.ch.levels.some(function (l) { return l.id === id; });
-  }); });
-  line('\n没有任何大关引用的孤儿关卡：' + orphans.length + ' 个');
-
-  line('\n—— 结论 ——');
-  if (!junk.length && !orphans.length) {
-    line('干净，没有自检留下的东西。');
-    finish('CLEAN');
-    return;
-  }
-  junk.forEach(function (j) {
-    line('  要删掉：' + j.ch.name + '（' + j.ch.levels.length + ' 关）— ' + j.why);
-  });
-  if (orphans.length) line('  要删掉：' + orphans.length + ' 个孤儿关卡');
-
-  if (!GO) {
-    line('\n（现在只是体检，什么都没改。确认上面这些确实都是垃圾后，');
-    line('  在地址栏后面加 #go 再打开一次就会真的删除。）');
-    finish('DRYRUN');
-    return;
+    out.push('');
+    if (!junk.length && !orphans.length) {
+      out.push('✓ 干净：没有发现自检留下的东西。');
+    } else {
+      out.push('发现 ' + junk.length + ' 个可疑大关、' + orphans.length + ' 个孤儿关卡（见上）。');
+    }
+    return { text: out.join('\n'), empty: false };
   }
 
-  junk.forEach(function (j) { Lib.removeChapter(j.ch.id); });
-  if (orphans.length) Lib.removeLevels(orphans);
-  line('\n✓ 已删除 ' + junk.length + ' 个大关、' + orphans.length + ' 个孤儿关卡。');
-  line('  现在剩下：' + Lib.chapters().length + ' 个大关 / ' + Lib.count() + ' 关');
-  finish('DONE');
+  function render() {
+    var r = analyze();
+    document.getElementById('report').textContent = r.text;
+    var box = document.getElementById('actions');
+    box.innerHTML = '';
+    if (r.empty) return;
+
+    if (junk.length || orphans.length) {
+      var b = document.createElement('button');
+      b.className = 'danger';
+      b.textContent = '删除上面标出来的 ' + junk.length + ' 个大关' + (orphans.length ? ' + ' + orphans.length + ' 个孤儿关卡' : '');
+      b.onclick = function () {
+        if (!confirm('确定删除这些吗？\n\n' + junk.map(function (j) { return j.ch.name; }).join('、') +
+          (orphans.length ? '\n（另有 ' + orphans.length + ' 个孤儿关卡）' : '') +
+          '\n\n你其它的关卡不会被碰到。想先留个底就取消，回编辑器「导出整个关卡库」备份一下再回来。')) return;
+        junk.forEach(function (j) { Lib.removeChapter(j.ch.id); });
+        if (orphans.length) Lib.removeLevels(orphans);
+        render();
+        alert('删好了。现在剩 ' + Lib.chapters().length + ' 个大关 / ' + Lib.count() + ' 关。');
+      };
+      box.appendChild(b);
+    }
+    var b2 = document.createElement('button');
+    b2.textContent = '重新体检';
+    b2.onclick = render;
+    box.appendChild(b2);
+  }
+
+  render();
+
+  /* 供无头自检使用：带 #go 时自动执行（无头下 confirm 会被自动取消，所以这里不走 confirm） */
+  if (AUTO && (junk.length || orphans.length)) {
+    junk.forEach(function (j) { Lib.removeChapter(j.ch.id); });
+    if (orphans.length) Lib.removeLevels(orphans);
+    render();
+    document.getElementById('report').textContent += '\n\n<<<AUTO-CLEANED>>>';
+  }
+  document.getElementById('report').textContent += '\n<<<READY>>>';
 })();
 </script>
 </body>

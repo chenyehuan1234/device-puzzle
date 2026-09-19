@@ -1,16 +1,38 @@
 @echo off
+rem ---------------------------------------------------------------
+rem  Run all Node tests (no browser needed).
+rem  ASCII-only + CRLF on purpose: see build.cmd for why.
+rem ---------------------------------------------------------------
 chcp 65001 >nul
+setlocal
 cd /d "%~dp0"
-echo === 1/3 规则引擎单元测试 ===
-node tests\rules.test.js || exit /b 1
+
+set RC=0
+
+echo === 1/4 rules engine ===
+node tests\rules.test.js
+if errorlevel 1 set RC=1
+
 echo.
-echo === 2/3 关卡包单元测试 ===
-node tests\bundle.test.js || exit /b 1
+echo === 2/4 level bundle ===
+node tests\bundle.test.js
+if errorlevel 1 set RC=1
+
 echo.
-echo === 3/3 界面层冒烟测试（假 DOM） ===
-node tests\ui.smoke.js || exit /b 1
+echo === 3/4 ui smoke (fake DOM) ===
+node tests\ui.smoke.js
+if errorlevel 1 set RC=1
+
 echo.
-echo 全部通过。
-echo 想再跑一遍真实浏览器自检： pwsh -File tests\run-probe.ps1
-echo 想打包单文件版：         build.cmd
+echo === 4/4 packaging hygiene ===
+node tests\packaging.test.js
+if errorlevel 1 set RC=1
+
+echo.
+if "%RC%"=="0" echo [OK] all node tests passed
+if not "%RC%"=="0" echo [FAILED] see the red lines above
+echo.
+echo Browser self-check : pwsh -File tests\run-probe.ps1
+echo Single-file build : build.cmd
 pause
+exit /b %RC%
