@@ -1,0 +1,14 @@
+# Git 忽略清单
+# 探针跑完会留下这些临时文件
+tests/dump.html
+tests/dump.err
+tmp-*.html
+*.tmp
+
+# 系统 / 编辑器垃圾
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.swp

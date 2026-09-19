@@ -1,0 +1,12 @@
+# 换行与文本属性
+# 源码统一用 LF 存进仓库，Windows 上的批处理 / PowerShell 脚本检出成 CRLF。
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# 二进制（万一以后加了图片音效素材）
+*.png binary
+*.jpg binary
+*.webp binary
+*.woff2 binary

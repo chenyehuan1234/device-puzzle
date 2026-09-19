@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>机关谜题 · 游戏框架 + 关卡编辑器</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="brand"><span class="logo"></span>机关谜题<span class="tiny">框架 + 关卡编辑器</span></div>
+
+    <div class="tabs">
+      <button class="tab is-on" id="tab-play" data-mode="play">▶ 游玩</button>
+      <button class="tab" id="tab-edit" data-mode="edit">✎ 关卡编辑器</button>
+    </div>
+
+    <div class="grow"></div>
+
+    <label class="chk" title="全部音效都是用 WebAudio 现场合成的，不需要素材文件"><input type="checkbox" id="chk-sfx" checked><span>🔊 音效</span></label>
+    <label class="chk"><input type="checkbox" id="chk-preview" checked><span>悬停推演</span></label>
+    <label class="chk"><input type="checkbox" id="chk-anim" checked><span>动画</span></label>
+    <button class="btn ghost" id="btn-help">规则说明</button>
+  </header>
+
+  <main>
+    <!-- ============ 编辑器左侧：当前关卡属性 + 关卡信息栏（大关 → 关卡） ============ -->
+    <aside class="side left" id="tree-col" hidden>
+      <div class="sec">
+        <div class="sec-title">当前关卡</div>
+        <input id="edit-name" class="input" placeholder="关卡名">
+        <div class="row">
+          <label class="mini">宽<input id="edit-w" class="num" type="number" min="1" max="60"></label>
+          <label class="mini">高<input id="edit-h" class="num" type="number" min="1" max="60"></label>
+          <button id="btn-resize" class="btn">应用尺寸</button>
+        </div>
+        <div class="row">
+          <label class="mini" style="flex:1">所属大关
+            <select id="edit-chapter" class="input" style="flex:1"></select>
+          </label>
+        </div>
+        <div class="row">
+          <button id="btn-edit-new" class="btn">新建关卡</button>
+          <button id="btn-edit-saveas" class="btn">另存为副本</button>
+        </div>
+        <div class="row">
+          <button id="btn-edit-del" class="btn danger">删除本关</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">关卡信息栏 <small>点关卡名打开编辑</small></div>
+        <div id="tree" class="tree"></div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">大关管理</div>
+        <div class="row">
+          <button id="btn-chapter-add" class="btn">新建大关</button>
+          <button id="btn-chapter-rename" class="btn">改名</button>
+        </div>
+        <div class="row">
+          <button id="btn-chapter-del" class="btn danger">删除选中大关</button>
+        </div>
+        <div class="row">
+          <button id="btn-progress-reset" class="btn">清空通关记录</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="board-col">
+
+      <!-- ============ 游玩：关卡选择界面 ============ -->
+      <div id="play-select" class="select-screen" hidden>
+        <div class="select-inner">
+          <div class="select-head">
+            <div class="select-title">选择关卡</div>
+            <div class="hint" id="progress-info"></div>
+          </div>
+          <div id="play-chapters"></div>
+          <div class="select-tools">
+            <button class="btn" id="btn-play-sandbox">进入机制沙盒（自检用）</button>
+            <span class="hint">编辑器里画好关卡后，会自动出现在这里。</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 游玩 / 编辑 舞台 ============ -->
+      <div id="stage" class="stage">
+        <div class="board-head">
+          <h1 id="level-title">机关谜题</h1>
+          <div id="board-sub" class="sub"></div>
+        </div>
+
+        <div class="board-wrap" id="board-wrap">
+          <canvas id="board"></canvas>
+          <div class="win-banner" id="win-banner" hidden>
+            <div class="win-card">
+              <div class="win-title">通 关 ！</div>
+              <div class="win-sub" id="win-sub"></div>
+              <div class="row center">
+                <button class="btn primary" id="btn-win-next">下一关 (Enter)</button>
+                <button class="btn" id="btn-win-again">重玩 (R)</button>
+                <button class="btn" id="btn-win-select">返回选关</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 中间操作条：编辑模式 -->
+        <div class="board-bar" id="edit-bar" hidden>
+          <button id="btn-edit-play" class="btn primary">▶ 试玩 <kbd>S</kbd></button>
+          <button id="btn-edit-save" class="btn">💾 保存并新建下一关 <kbd>Ctrl+S</kbd></button>
+          <button id="btn-edit-undo" class="btn">撤销 <kbd>Ctrl+Z</kbd></button>
+          <button id="btn-edit-clear" class="btn">清空物品</button>
+          <span class="bar-sep"></span>
+          <button id="btn-edit-export" class="btn">导出 JSON</button>
+          <button id="btn-edit-import" class="btn">导入 JSON</button>
+          <button id="btn-edit-json" class="btn">查看 / 编辑 JSON</button>
+          <input type="file" id="file-import" accept=".json,application/json" hidden>
+        </div>
+
+        <!-- 中间操作条：游玩模式 -->
+        <div class="board-bar" id="play-bar" hidden>
+          <button id="btn-play-prev" class="btn">◀ 上一关</button>
+          <button id="btn-play-undo" class="btn">撤回 <kbd>空格</kbd></button>
+          <button id="btn-play-restart" class="btn">重开 <kbd>R</kbd></button>
+          <button id="btn-play-next" class="btn">下一关 ▶</button>
+          <span class="bar-sep"></span>
+          <button id="btn-play-select" class="btn">选关 <kbd>Esc</kbd></button>
+          <button id="btn-play-back" class="btn primary" hidden>返回编辑 <kbd>B</kbd></button>
+        </div>
+
+        <div class="board-foot">
+          <span id="hint" class="hint">在编辑器里画出关卡，然后点「试玩」。</span>
+          <span class="grow"></span>
+          <span id="foot-right" class="hint dim"></span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side" id="side-col">
+
+      <!-- ===================== 游玩面板：只剩信息，操作都在中间那条 ===================== -->
+      <div class="panel" id="panel-play">
+        <div class="sec">
+          <div class="sec-title">状态</div>
+          <div class="stat"><span>步数</span><b id="stat-moves">0</b></div>
+          <div class="stat"><span>未归位图形</span><b id="stat-misplaced">0</b></div>
+          <div class="note" id="play-note"></div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">悬停 / 上次操作</div>
+          <div id="inspect" class="inspect">把鼠标移到设备上，会显示它这一下会作用到哪些格子。</div>
+        </div>
+      </div>
+
+      <!-- ===================== 编辑面板：只剩画画相关 ===================== -->
+      <div class="panel" id="panel-edit" hidden>
+        <div class="sec">
+          <div class="sec-title">笔刷
+            <small>左键画 / 右键有东西的格子=擦掉 / 右键空地=放下笔刷 / 中键或 Alt+左键吸取</small>
+          </div>
+          <div id="palette" class="palette"></div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">关卡体检</div>
+          <div id="checkup" class="checkup"></div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">快捷键</div>
+          <div class="keys">
+            <div><kbd>S</kbd> 试玩本关</div>
+            <div><kbd>B</kbd> 试玩中返回编辑</div>
+            <div><kbd>Ctrl+S</kbd> 保存并新建下一关（同尺寸）</div>
+            <div><kbd>Ctrl+Z</kbd> 撤销　<kbd>R</kbd> 转笔刷（Shift 反向）</div>
+            <div><kbd>滚轮</kbd> 换设备朝向　<kbd>中键</kbd> 吸取</div>
+            <div><kbd>右键</kbd> 有东西=擦掉这一格（含目标）　空地=<b>放下笔刷</b></div>
+            <div><kbd>Esc</kbd> 放下笔刷　<kbd>1</kbd>空地 <kbd>2</kbd>正方形 <kbd>3</kbd>圆形 <kbd>4</kbd>方形目标 <kbd>5</kbd>圆形目标 <kbd>0</kbd>取消目标</div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-box">
+    <div class="modal-head">
+      <b id="modal-title">标题</b>
+      <button class="btn ghost" id="modal-close">关闭</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="js/core.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/sfx.js"></script>
+<script src="js/library.js"></script>
+<script src="js/render.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
