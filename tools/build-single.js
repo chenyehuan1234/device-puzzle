@@ -24,8 +24,8 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT_DIR = path.join(ROOT, 'dist');
-/* 不带参数时会自动找这两个文件名（你从编辑器「导出整个关卡库」默认就叫 关卡库.json）。
-   示例关卡包不参与自动探测，只能显式传：node tools/build-single.js samples\示例关卡包.json */
+/* 先按习惯名字找；找不到就扫目录里所有 json，谁的内容是关卡包就用谁
+   （这样你导出的文件叫「我的关卡库.json」「关卡库 (1).json」都认得出来） */
 const DEFAULT_NAMES = ['关卡库.json', 'levels.json'];
 
 function read(rel) {
@@ -39,14 +39,64 @@ function safeForScriptTag(js) {
   return js.replace(/<\/script>/gi, '<\\/script>');
 }
 
-/* 找关卡包：命令行给了就用给的，否则按默认名字找一遍 */
-function findBundle(explicit) {
-  if (explicit) return { file: explicit, auto: false };
-  for (let i = 0; i < DEFAULT_NAMES.length; i++) {
-    const p = path.join(ROOT, DEFAULT_NAMES[i]);
-    if (fs.existsSync(p)) return { file: p, auto: true };
+/* 这个 json 是不是关卡包？是就返回摘要，不是返回 null */
+function asBundle(file) {
+  let b;
+  try { b = JSON.parse(fs.readFileSync(file, 'utf8')); }
+  catch (e) { return null; }
+  if (Array.isArray(b)) b = b[0];
+  if (!b || b.format !== 'mp-level-bundle' || !b.chapters || !b.levels) {
+    /* 宽容一点：结构对也算（手写的关卡包可能没写 format） */
+    if (!b || !b.chapters || !b.levels) return null;
   }
-  return null;
+  let lv = 0;
+  b.chapters.forEach(function (c) { lv += ((c && c.levels) || []).filter(function (id) { return b.levels[id]; }).length; });
+  if (!lv) return null;
+  return { bundle: b, levels: lv, chapters: b.chapters.length };
+}
+
+/* 找关卡包：命令行给了就用给的；
+   否则扫项目根目录（再退一步：上一级目录）里所有 .json，按「内容」认出关卡包 —— 文件叫什么名字都行。
+   有多个的话：先看习惯名字，再看哪个关卡多，最后看谁最新。 */
+function findBundle(explicit) {
+  if (explicit) {
+    const info = asBundle(path.isAbsolute(explicit) ? explicit : path.join(ROOT, explicit));
+    return { file: explicit, auto: false, scanned: [], others: [], info: info, byName: false };
+  }
+
+  const scanned = [];
+  const cands = [];
+  const dirs = [ROOT, path.dirname(ROOT)];
+  for (let d = 0; d < dirs.length; d++) {
+    let names = [];
+    try { names = fs.readdirSync(dirs[d]); } catch (e) { continue; }
+    const jsons = names.filter(function (f) { return /\.json$/i.test(f); }).sort();
+    for (let i = 0; i < jsons.length; i++) {
+      const p = path.join(dirs[d], jsons[i]);
+      let st = null, info = null;
+      try { st = fs.statSync(p); if (st.isFile()) info = asBundle(p); } catch (e) { info = null; }
+      if (d === 0) scanned.push({ name: jsons[i], ok: !!info, levels: info ? info.levels : 0 });
+      if (info) cands.push({ file: p, name: jsons[i], info: info, mtime: st ? st.mtimeMs : 0, dir: d });
+    }
+    if (cands.length) break;   /* 项目根目录里找到了就不去上一级 */
+  }
+
+  if (!cands.length) return { file: null, auto: true, scanned: scanned, others: [], byName: false, info: null };
+
+  let pick = null;
+  for (let i = 0; i < DEFAULT_NAMES.length && !pick; i++) {
+    pick = cands.filter(function (c) { return c.name === DEFAULT_NAMES[i]; })[0] || null;
+  }
+  let byName = !!pick;
+  if (!pick) {
+    cands.sort(function (a, b) {
+      if (b.info.levels !== a.info.levels) return b.info.levels - a.info.levels;
+      return b.mtime - a.mtime;
+    });
+    pick = cands[0];
+  }
+  const others = cands.filter(function (c) { return c.file !== pick.file; });
+  return { file: pick.file, auto: true, scanned: scanned, others: others, info: pick.info, byName: byName, dir: pick.dir };
 }
 
 function parseArgs(argv) {
@@ -78,9 +128,9 @@ function build(opts) {
   const used = [];
 
   /* ---- 关卡包（可选） ---- */
-  let seed = null, seedInfo = null, seedFile = null;
-  const found = findBundle(opts.bundle);
-  if (found) {
+  let seed = null, seedInfo = null, seedFile = null, found = null;
+  found = findBundle(opts.bundle);
+  if (found && found.file) {
     const text = read(found.file);
     seedInfo = checkBundle(text, found.file);
     seed = seedInfo.bundle;
@@ -134,9 +184,32 @@ function build(opts) {
   targets.forEach(function (t) { console.log('   ' + path.relative(ROOT, t)); });
   if (seed) {
     console.log('   内置关卡包：' + seedFile + '　→　' + seedInfo.chapters + ' 个大关 / ' + seedInfo.levels + ' 关' +
-      (found.auto ? '（自动找到的，想带自己的关卡就把它换成你导出的「关卡库.json」）' : ''));
+      (!found.byName ? '（按文件内容认出来的，文件名叫什么都行）' : ''));
+    if (found.dir === 1) console.log('   （注意：是从上一级目录找到的，建议挪到 ' + path.basename(ROOT) + '\\ 目录下）');
+    if (found.others && found.others.length) {
+      console.log('   ⚠ 这个目录里还有 ' + found.others.length + ' 个关卡包，这次没用它们：' +
+        found.others.map(function (o) { return o.name + '（' + o.info.levels + ' 关）'; }).join('、'));
+      console.log('     建议只留一个，免得以后搞不清用的是哪个（或者打包时直接指定文件名）');
+    }
+    /* 关卡包里如果混着自检留下的测试大关，提醒一句 */
+    const junk = seed.chapters.filter(function (c) {
+      return /探针|冒烟|测试关卡|CtrlS/.test(c.name || '');
+    });
+    if (junk.length) {
+      console.log('   ⚠ 这个关卡包里有看着像自检留下的测试大关：' + junk.map(function (c) { return c.name; }).join('、'));
+      console.log('     在编辑器左边栏点中它 →「删除选中大关」，再重新导出一次就干净了');
+    }
   } else {
-    console.log('   没有关卡包：打出来的是一份「空游戏」，玩家要自己画关（或者你导出关卡包后再打包一次）');
+    console.log('   没有关卡包：打出来的是一份「空游戏」，玩家要自己画关');
+    console.log('   想做成「一份带关卡的完整游戏」：编辑器左栏「关卡包」→「导出整个关卡库」，');
+    console.log('   把导出的 json 放到 ' + path.basename(ROOT) + '\\ 目录下（文件名叫什么都行），再打包一次。');
+    if (found && found.scanned && found.scanned.length) {
+      console.log('   （这次看过的 json：' + found.scanned.map(function (s) {
+        return s.name + (s.ok ? '[是关卡包]' : '[不是]');
+      }).join('、') + '）');
+    } else if (found) {
+      console.log('   （' + path.basename(ROOT) + '\\ 和上一级目录里都没有 .json 文件）');
+    }
   }
   console.log('   内联了：' + used.join('、'));
   return { version: version, size: kb, targets: targets, seed: seedInfo ? seedInfo.levels : 0 };
@@ -146,4 +219,4 @@ if (require.main === module) {
   try { build(parseArgs(process.argv.slice(2))); }
   catch (e) { console.error('✗ 打包失败：' + e.message); process.exit(1); }
 }
-module.exports = { build: build };
+module.exports = { build: build, findBundle: findBundle, asBundle: asBundle };

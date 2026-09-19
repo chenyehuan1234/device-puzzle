@@ -70,7 +70,79 @@ group('自检脚本不会碰你的浏览器数据');
 }
 
 /* ==========================================================================
- * 3. index.html 的引用都存在
+ * 2. PowerShell 脚本必须是「UTF-8 带 BOM」
+ *    没有 BOM 的话，Windows PowerShell 5.1 会按 ANSI 读，中文全变乱码、甚至语法错误
+ *    （症状：双击 build.cmd 直接报 Unexpected token，或者找不到「关卡库.json」）
+ * ======================================================================= */
+group('PowerShell 脚本的编码');
+['tools/build.ps1', 'tools/check-single.ps1', 'tests/run-probe.ps1'].forEach(function (f) {
+  ok(exists(f), f + ' 存在');
+  if (!exists(f)) return;
+  const b = fs.readFileSync(path.join(ROOT, f));
+  const bom = b[0] === 0xEF && b[1] === 0xBB && b[2] === 0xBF;
+  ok(bom, f + ' 是 UTF-8 带 BOM（没有 BOM 时 PowerShell 5.1 会读成乱码）');
+});
+{
+  /* 别再把「读 dump」写在「删 dump」后面了（我犯过一次，PowerShell 直接报 FileNotFound） */
+  const t = read('tools/check-single.ps1');
+  const reads = (t.match(/ReadAllText\(\$dump/g) || []).length;
+  ok(reads === 1, 'check-single.ps1 只读一次 dump（实际 ' + reads + ' 次）');
+  ok(t.indexOf('ReadAllText($dump') < t.indexOf('Remove-Item $dump'), '先读 dump，再删 dump');
+  ok(t.indexOf("ReadAllText($dump, [System.Text.Encoding]::UTF8)") > 0, 'dump 按 UTF-8 读（5.1 的 Get-Content 会按 ANSI 解码）');
+}
+{
+  const t = read('tests/run-probe.ps1');
+  ok(t.indexOf("ReadAllText($dump, [System.Text.Encoding]::UTF8)") > 0, '探针也按 UTF-8 读 dump');
+}
+{
+  ok(exists('tools/fix-script-encoding.ps1'), '有「一键修脚本编码」的工具');
+  const t = read('tools/fix-script-encoding.ps1');
+  ok(t.indexOf('*.cmd') >= 0 && t.indexOf('*.ps1') >= 0, '它能同时修 .cmd（CRLF）和 .ps1（BOM）');
+}
+
+/* ==========================================================================
+ * 3. 关卡包识别：不能认文件名，要认内容
+ * ======================================================================= */
+group('关卡包识别（文件名叫什么都行）');
+{
+  const build = require('../tools/build-single.js');
+  ok(typeof build.findBundle === 'function', 'findBundle 可以单独调用');
+
+  /* 造一个「名字起错了」的关卡包放到根目录，看能不能认出来 */
+  const wrongName = path.join(ROOT, '__测试用的关卡包 名字.json');
+  const sample = path.join(ROOT, 'samples', '示例关卡包.json');
+  if (fs.existsSync(sample)) {
+    fs.copyFileSync(sample, wrongName);
+    ok(!!build.asBundle(wrongName), '按内容认出「名字起错了的」关卡包');
+
+    const found = build.findBundle();
+    ok(!!found.file, 'findBundle 总能找到关卡包');
+    const namedExists = fs.existsSync(path.join(ROOT, '关卡库.json'));
+    if (namedExists) {
+      ok(path.basename(found.file) === '关卡库.json', '有标准名字时优先用 关卡库.json');
+      ok(found.others.some(function (o) { return path.basename(o.file) === path.basename(wrongName); }),
+        '并在「其它候选」里列出了名字不对的那个（打包会提示）');
+    } else {
+      ok(path.basename(found.file) === path.basename(wrongName), '没有标准名字时，名字不对的也能被选中');
+    }
+    fs.unlinkSync(wrongName);
+  } else {
+    ok(false, '缺少 samples/示例关卡包.json');
+  }
+
+  /* 不是关卡包的 json 不该被认成关卡包 */
+  const notBundle = path.join(ROOT, '__测试用的普通文件.json');
+  fs.writeFileSync(notBundle, JSON.stringify({ hello: 1 }), 'utf8');
+  ok(!build.asBundle(notBundle), '普通 json 不会被当成关卡包');
+  const single = path.join(ROOT, '__测试用的单个关卡.json');
+  fs.writeFileSync(single, JSON.stringify({ name: 'x', w: 3, h: 3, cells: [] }), 'utf8');
+  ok(!build.asBundle(single), '单个关卡文件（不是关卡包）不会被自动选中');
+  fs.unlinkSync(notBundle);
+  fs.unlinkSync(single);
+}
+
+/* ==========================================================================
+ * 4. index.html 的引用都存在
  * ======================================================================= */
 group('index.html 引用完整');
 {

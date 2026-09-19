@@ -194,7 +194,14 @@ node tools\make-sample-bundle.js    :: 重新生成示例关卡包（会校验�
 
 > `build.cmd` / `run-tests.cmd` 是**纯 ASCII + CRLF** 的批处理壳子，真正的活在 `tools\build.ps1` 里。
 > （cmd.exe 解析不了「LF 换行 + 中文」的批处理，症状就是双击后黑窗一闪而过 —— `tests\packaging.test.js` 会盯着这一条。）
+> `.ps1` 必须存成 **UTF-8 带 BOM**（不然 Windows PowerShell 5.1 会当 ANSI 读，中文变乱码、甚至语法错误）。
+> 改完脚本跑一下 `pwsh -File tools\fix-script-encoding.ps1` 一键修好，再 `node tests\packaging.test.js` 确认。
 > 双击时如果提示找不到 node，装上 [Node.js](https://nodejs.org/) 再试。
+
+**关卡包放哪儿？** 直接把导出的 `关卡库.json` 丢到项目根目录就行 ——
+打包脚本是**按文件内容认**关卡包的，**文件叫什么名字都可以**（`我的关卡.json`、`关卡库 (1).json` 都行，
+上一级目录里也能找到，找到了会告诉你用的是哪个）。目录里如果有好几个关卡包，它会挑「关卡最多的那个」，
+并把其它候选列出来提醒你。
 
 > **自检不会碰你的关卡**：`run-probe.ps1` 和 `check-single.ps1` 都用**一次性临时 profile**，
 > 跑完就删，绝不会读写你平时那个浏览器的关卡库。
@@ -283,7 +290,7 @@ git tag vX.Y.Z
 版本号：修 bug / 小调整 → 第三位 +1；新增功能 → 第二位 +1；改规则或结构 → 第一位 +1。
 
 - 版本历史：[`CHANGELOG.md`](CHANGELOG.md)
-- 更新报告：[`reports/`](reports/)（当前最新：[`reports/v0.1.0.md`](reports/v0.1.0.md)）
+- 更新报告：[`reports/`](reports/)（当前最新：[`reports/v0.5.2.md`](reports/v0.5.2.md)）
 - 提交前请确认 `tests/dump.html` 之类的临时文件没被提交（`.gitignore` 已经挡掉了）
 
 ---

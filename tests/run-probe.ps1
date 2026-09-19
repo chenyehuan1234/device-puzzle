@@ -1,4 +1,4 @@
-# 在真实 Chrome 里跑一遍界面自检（无头模式），并把结果打印出来。
+﻿# 在真实 Chrome 里跑一遍界面自检（无头模式），并把结果打印出来。
 #   用法：  pwsh -File tests\run-probe.ps1
 $ErrorActionPreference = 'Stop'
 
@@ -27,7 +27,8 @@ Start-Process -FilePath $chrome -NoNewWindow -Wait -PassThru -ArgumentList @(
   "--window-size=1400,900", "--virtual-time-budget=15000", "--dump-dom", $probeUrl
 ) -RedirectStandardOutput $dump -RedirectStandardError $err | Out-Null
 
-$txt = Get-Content $dump -Raw
+# 按 UTF-8 读（PowerShell 5.1 的 Get-Content -Raw 会按 ANSI 解码，中文就花了）
+$txt = [System.IO.File]::ReadAllText($dump, [System.Text.Encoding]::UTF8)
 Remove-Item $profile -Recurse -Force -ErrorAction SilentlyContinue
 $m = [regex]::Match($txt, '(?s)<pre id="probe-out"[^>]*>(.*?)</pre>')
 if (-not $m.Success) { Write-Host "没有拿到探针结果（页面可能报错）" -ForegroundColor Red; exit 1 }

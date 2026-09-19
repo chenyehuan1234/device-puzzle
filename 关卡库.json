@@ -55,7 +55,16 @@
     "Lmu7t20ego45p",
     "Lmu7t2qyps42j",
     "Lmu7t3r8x8354",
-    "Lmu7t4qeqx9kl"
+    "Lmu7t4qeqx9kl",
+    "Lmu7tag0vzxof",
+    "Lmu7tbmo0sg1v",
+    "Lmu7tc64q7g8n",
+    "Lmu7tdook4pwy",
+    "Lmu7tedjk9c6o",
+    "Lmu7tfuhu56c7",
+    "Lmu7tgs4dgpl7",
+    "Lmu7tvls96lp7",
+    "Lmu7tw2sac9pt"
    ]
   }
  ],
@@ -3290,6 +3299,884 @@
     {
      "t": 0,
      "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "switch",
+      "s": "h"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789787539609
+  },
+  "Lmu7tag0vzxof": {
+   "id": "Lmu7tag0vzxof",
+   "name": "3-14",
+   "w": 5,
+   "h": 4,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ur_dr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789787594876
+  },
+  "Lmu7tbmo0sg1v": {
+   "id": "Lmu7tbmo0sg1v",
+   "name": "3-15",
+   "w": 2,
+   "h": 7,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ur_dr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "pull",
+      "s": "U"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789787620100
+  },
+  "Lmu7tc64q7g8n": {
+   "id": "Lmu7tc64q7g8n",
+   "name": "3-16",
+   "w": 5,
+   "h": 3,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "D"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "R:push"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "L"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "push",
+      "s": "U"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789787690798
+  },
+  "Lmu7tdook4pwy": {
+   "id": "Lmu7tdook4pwy",
+   "name": "3-17",
+   "w": 4,
+   "h": 3,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "R:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "R:push"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789787723018
+  },
+  "Lmu7tedjk9c6o": {
+   "id": "Lmu7tedjk9c6o",
+   "name": "3-18",
+   "w": 4,
+   "h": 3,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "ud"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "R:push"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "vpush",
+      "s": "L:pull"
+     }
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789787791643
+  },
+  "Lmu7tfuhu56c7": {
+   "id": "Lmu7tfuhu56c7",
+   "name": "3-19",
+   "w": 5,
+   "h": 5,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "circle"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": {
+      "k": "device",
+      "type": "rotate",
+      "s": "ccw"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "swap",
+      "s": "lr"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "circle",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789787835223
+  },
+  "Lmu7tgs4dgpl7": {
+   "id": "Lmu7tgs4dgpl7",
+   "name": "3-20",
+   "w": 9,
+   "h": 4,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "rotate",
+      "s": "ccw"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "rotate",
+      "s": "ccw"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
      "item": null
     },
     {
@@ -3365,7 +4252,243 @@
    ],
    "solution": null,
    "chapter": "chmu7sjbaxvtgo",
-   "updated": 1789787273138
+   "updated": 1789788526850
+  },
+  "Lmu7tvls96lp7": {
+   "id": "Lmu7tvls96lp7",
+   "name": "3-21",
+   "w": 5,
+   "h": 4,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "rotate",
+      "s": "ccw"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "device",
+      "type": "rotate",
+      "s": "ccw"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": "square",
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": {
+      "k": "square"
+     }
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789788548883
+  },
+  "Lmu7tw2sac9pt": {
+   "id": "Lmu7tw2sac9pt",
+   "name": "3-22",
+   "w": 5,
+   "h": 4,
+   "note": "",
+   "cells": [
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    },
+    {
+     "t": 0,
+     "goal": null,
+     "item": null
+    }
+   ],
+   "solution": null,
+   "chapter": "chmu7sjbaxvtgo",
+   "updated": 1789788548890
   }
  }
 }

@@ -1,4 +1,4 @@
-# 自检「单文件版」：用无头 Chrome 打开 dist 里的单文件，
+﻿# 自检「单文件版」：用无头 Chrome 打开 dist 里的单文件，
 # 确认内联脚本真的跑起来了（调色板画出来了、关卡树填上了、顶栏版本号写上了）；
 # 如果这一份内嵌了关卡包，还要确认关卡真的被装进关卡库、选关界面能看到卡片。
 #   用法： pwsh -File tools\check-single.ps1
@@ -32,7 +32,9 @@ Start-Process -FilePath $chrome -NoNewWindow -Wait -PassThru -ArgumentList @(
   "--window-size=1400,900", "--virtual-time-budget=8000", "--dump-dom", $url
 ) -RedirectStandardOutput $dump -RedirectStandardError $err | Out-Null
 
-$txt = Get-Content $dump -Raw
+# 一定要按 UTF-8 读：Windows PowerShell 5.1 的 Get-Content -Raw 会按 ANSI 解码，
+# 那样中文断言（比如「主对角（左上↔右下）」）就永远匹配不上了。
+$txt = [System.IO.File]::ReadAllText($dump, [System.Text.Encoding]::UTF8)
 Remove-Item $dump, $err -ErrorAction SilentlyContinue
 Remove-Item $profile -Recurse -Force -ErrorAction SilentlyContinue
 
