@@ -1,7 +1,8 @@
 /* =============================================================================
  * 关卡包（Bundle）单元测试 —— Node 直接跑：node tests/bundle.test.js
  * -----------------------------------------------------------------------------
- * 覆盖：编辑器导出的关卡包结构、解析、导入（副本 / 整包替换）、内置关卡包（seed）
+ * 覆盖：编辑器导出的关卡包结构、解析、导入（副本 / 整包替换）、内置关卡包（seed）、
+ *       关卡包身份指纹（内容哈希）、换库与备份
  * 这些都不需要 DOM，所以这里是纯 Node 测试。
  * ========================================================================== */
 'use strict';
@@ -178,6 +179,66 @@ group('内置关卡包（单文件版用）');
   mine.id = Lib.put(mine);
   eq(Lib.count(), 3, '玩家自己加了一关');
   ok(Lib.seedDone() === Lib.seedTag(), '下次打开时看到标记就不再重复装');
+}
+
+/* ==========================================================================
+ * 4.1 关卡包身份指纹 + 换库 / 备份
+ *     修的就是这个坑：身份原来只有「包名@导出日期」，而 exportedAt 只到天，
+ *     同一天导出的两份包（内容完全不同）标签一模一样 → 换了库页面却一直是旧的。
+ * ======================================================================= */
+group('关卡包身份指纹 / 换库 / 备份');
+{
+  eq(Lib.bundleCount(globalThis.MP_SEED), 2, 'bundleCount 数得清有几关');
+  eq(Lib.bundleCount({ chapters: [{ levels: ['x', 'y'] }], levels: { x: {} } }), 1,
+    'bundleCount 只数「引用了而且数据真的在」的关');
+
+  const tagA = Lib.seedTag();
+  const fpA = Lib.bundleFingerprint(Lib.seed());
+  eq(Lib.bundleFingerprint(Lib.seed()), fpA, '同一份包 → 指纹稳定');
+  ok(tagA.indexOf('#2.') > 0, '标签 = 包名@日期#关数.内容哈希：' + tagA);
+
+  /* 名同、日期同、内容只差一关 —— 标签必须能分辨出来 */
+  const seedTwin = JSON.parse(JSON.stringify(globalThis.MP_SEED));
+  seedTwin.levels.SL2.name = '内置 2（改名版）';
+  ok(Lib.bundleFingerprint(seedTwin) !== fpA, '内容变了 → 指纹变了');
+  ok((String(seedTwin.name) + '@' + String(seedTwin.exportedAt)) ===
+     (String(globalThis.MP_SEED.name) + '@' + String(globalThis.MP_SEED.exportedAt)),
+    '（前提：包名和导出日期完全一样，光看它们分辨不出来）');
+
+  /* 换库：内容被替换，但通关进度是按关卡 id 记的，应当保住 */
+  const keep = Lib.list()[0].id;
+  Lib.markCleared(keep);
+  const beforeCount = Lib.count();
+
+  const r = Lib.replaceWith(globalThis.MP_SEED);
+  eq(r.before, beforeCount, 'replaceWith 报告换库前的关数：' + beforeCount);
+  eq(r.levels, 2, '换成了 2 关');
+  eq(Lib.count(), 2, '库里就是这 2 关');
+  ok(Lib.isCleared(keep), '通关进度按关卡 id 保住了');
+
+  /* 备份：存 → 读 → 恢复 → 删 */
+  ok(Lib.backupInfo() === null, '一开始没有备份');
+  const b = Lib.saveBackup('单元测试');
+  ok(!!b, 'saveBackup 返回备份摘要');
+  eq(b.levels, 2, '备份里是当前这 2 关');
+
+  Lib.put(MP.buildLevel({ id: 'EXTRA', name: '换库后加的', w: 5, h: 3, map: ['.....', '..sS.', '.....'] }));
+  eq(Lib.count(), 3, '手动加一关，准备恢复');
+  const info = Lib.backupInfo();
+  ok(!!info && info.note === '单元测试', 'backupInfo 读得到原因：' + (info && info.note));
+  const rRes = Lib.restoreBackup();
+  ok(!!rRes, 'restoreBackup 成功');
+  eq(Lib.count(), 2, '回到备份时的 2 关');
+  ok(!Lib.get('EXTRA'), '换库后加的关卡不见了（按预期被替换）');
+
+  Lib.clearBackup();
+  ok(Lib.backupInfo() === null, 'clearBackup 删掉了备份');
+
+  /* 「已处理」标记可以清掉，用来重新触发更新提示 */
+  Lib.markSeedDone(Lib.seedTag());
+  ok(Lib.seedDone() === Lib.seedTag(), 'markSeedDone 写入标记');
+  Lib.clearSeedDone();
+  eq(Lib.seedDone(), '', 'clearSeedDone 清掉标记');
 }
 
 /* ==========================================================================

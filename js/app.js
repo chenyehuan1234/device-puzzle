@@ -1189,6 +1189,71 @@
     return r;
   };
 
+  /* 备份时间戳 → 「09-19 18:30」 */
+  function fmtWhen(ts) {
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) return '（时间未知）';
+    const p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  /* 关卡库被整体换掉之后：把编辑器 / 游玩态重新挂到新库上 */
+  function afterLibrarySwap(msg) {
+    const list = Lib.list();
+    const chs = Lib.chapters();
+    if (!chs.length) Lib.addChapter('第一大关');
+    App.selChapter = (chs[0] || {}).id;
+    App.editLevel = list.length ? Lib.get(list[0].id)
+      : Lib.blank(10, 8, Lib.autoName(App.selChapter), App.selChapter);
+    App.fromEdit = false;
+    App.screen = 'select';
+    App.loadPlay(list.length ? list[0].id : '__sandbox__');
+    App.screen = 'select';
+    refreshAll();
+    if (msg) App.toast(msg, 'ok');
+  }
+
+  /* 用内置关卡包**替换**本机关卡库（通关进度按关卡 id 保留；替换前自动备份） */
+  App.applySeedUpdate = function () {
+    const s = Lib.seed();
+    if (!s) { App.toast('这一份没有内置关卡包', 'bad'); return null; }
+    const total = Lib.count();
+    const want = Lib.bundleCount(s);
+    if (!root.confirm('更新到新版关卡包？\n\n' +
+      '· 本机现在：' + total + ' 关\n' +
+      '· 换成新版：' + (s.chapters || []).length + ' 个大关 / ' + want + ' 关\n' +
+      '· 已通关的进度按关卡编号保留\n' +
+      '· 替换前会自动备份本机内容（选关界面随时能「恢复这份备份」）\n\n' +
+      '注意：本机关卡库里**你自己画过、还没导出的关**会被换掉。')) return null;
+    Lib.saveBackup('更新到内置关卡包前');
+    const r = Lib.replaceWith(s);
+    Lib.markSeedDone(Lib.seedTag());
+    if (App.seed) { App.seed.applied = true; App.seed.pending = false; }
+    if ($('btn-seed-load')) $('btn-seed-load').textContent = '导入内置关卡包';
+    afterLibrarySwap('已更新到新版关卡包：' + r.chapters + ' 个大关 / ' + r.levels + ' 关（旧内容已备份）');
+    return r;
+  };
+
+  /* 恢复「换库前」的备份 */
+  App.restoreSeedBackup = function () {
+    const info = Lib.backupInfo();
+    if (!info) { App.toast('没有找到备份', 'bad'); return null; }
+    if (!root.confirm('恢复这份备份？\n\n' +
+      '· 备份内容：' + info.chapters + ' 个大关 / ' + info.levels + ' 关（' + fmtWhen(info.at) + '）\n' +
+      '· 现在库里的 ' + Lib.count() + ' 关会被替换掉\n' +
+      '· 会先把「现在这一份」也备份下来，万一恢复错了还能再换回来')) return null;
+    Lib.saveBackup('恢复备份前');
+    const r = Lib.replaceWith(info.bundle);
+    afterLibrarySwap('已恢复备份：' + r.chapters + ' 个大关 / ' + r.levels + ' 关');
+    return r;
+  };
+
+  /* 顶栏那个按钮：有新版就更新，否则导入副本 */
+  App.seedAction = function () {
+    if (App.seed && App.seed.pending) return App.applySeedUpdate();
+    return App.importSeed();
+  };
+
   function renderPlaySelect() {
     const host = $('play-chapters');
     if (!host) return;
@@ -1200,22 +1265,64 @@
         : '还没有关卡，去编辑器画一关吧';
     }
 
-    /* 内嵌关卡包说明：让「这一份自带多少关 / 我本机有多少关」一眼看清 */
+    /* 内嵌关卡包说明 / 更新提示：让「这一份自带多少关 / 我本机有多少关」一眼看清 */
     if (App.seed && !App.seed.applied) {
-      const note = mk('div', 'seed-note');
-      note.appendChild(mk('b', null, '这一份自带了关卡包「' + App.seed.name + '」：' +
-        App.seed.chapters + ' 个大关 / ' + App.seed.levels + ' 关。'));
-      note.appendChild(mk('div', 'sn-body',
-        '不过你这个浏览器里已经有 ' + total + ' 关了自己的关卡（同一个浏览器里所有本地页面共用一份存档），' +
-        '所以内置包没有覆盖它 —— 下面显示的是你本机的内容。'));
+      const upd = !!App.seed.pending;
+      const note = mk('div', 'seed-note' + (upd ? ' is-update' : ''));
+      note.appendChild(mk('b', null, upd
+        ? '这一份自带了新版关卡包「' + App.seed.name + '」：' + App.seed.chapters + ' 个大关 / ' + App.seed.levels + ' 关。'
+        : '这一份自带了关卡包「' + App.seed.name + '」：' + App.seed.chapters + ' 个大关 / ' + App.seed.levels + ' 关。'));
+      note.appendChild(mk('div', 'sn-body', upd
+        ? ('你浏览器里还存着旧的一份（' + total + ' 关），所以下面显示的是你本机的旧内容。' +
+           '内置关卡包不会自动覆盖本机数据，要更新得你点一下：')
+        : ('不过你这个浏览器里已经有 ' + total + ' 关了自己的关卡（同一个浏览器里所有本地页面共用一份存档），' +
+           '所以内置包没有覆盖它 —— 下面显示的是你本机的内容。')));
       const row = mk('div', 'sn-row');
-      const b = mk('button', 'btn', '导入内置关卡包（副本，不会覆盖）');
+      if (upd) {
+        const bUpd = mk('button', 'btn primary', '⚡ 更新到新版（' + total + ' 关 → ' + App.seed.levels + ' 关）');
+        bUpd.addEventListener('click', function () { App.applySeedUpdate(); });
+        row.appendChild(bUpd);
+      }
+      const b = mk('button', 'btn' + (upd ? '' : ' primary'), '导入内置关卡包（副本，不会覆盖）');
       b.addEventListener('click', function () { App.importSeed(); });
       row.appendChild(b);
-      const tip = mk('span', 'hint', '想当「新玩家」试试这一份：用浏览器的隐私 / 无痕窗口打开它。');
-      row.appendChild(tip);
+      if (upd) {
+        const bLater = mk('button', 'btn ghost', '先不动');
+        bLater.addEventListener('click', function () {
+          Lib.markSeedDone(App.seed.tag);      /* 记下「这次不更新」，不再反复提醒 */
+          App.seed.pending = false;
+          refreshAll();
+        });
+        row.appendChild(bLater);
+      }
       note.appendChild(row);
+      if (!upd) {
+        const tip = mk('span', 'hint', '想当「新玩家」试试这一份：用浏览器的隐私 / 无痕窗口打开它。');
+        row.appendChild(tip);
+      }
       host.appendChild(note);
+    }
+
+    /* 备份条：任何时候有备份就显示，方便「更新失败想退回去」 */
+    const bk = Lib.backupInfo();
+    if (bk) {
+      const bnote = mk('div', 'seed-note is-backup');
+      bnote.appendChild(mk('b', null, '有一份换库前的备份：' + bk.chapters + ' 个大关 / ' + bk.levels + ' 关。'));
+      bnote.appendChild(mk('div', 'sn-body', '备份时间 ' + fmtWhen(bk.at) + (bk.note ? '（' + bk.note + '）' : '') +
+        '　当前关卡库有 ' + total + ' 关。'));
+      const brow = mk('div', 'sn-row');
+      const bRes = mk('button', 'btn', '恢复这份备份');
+      bRes.addEventListener('click', function () { App.restoreSeedBackup(); });
+      brow.appendChild(bRes);
+      const bDel = mk('button', 'btn ghost', '删掉备份');
+      bDel.addEventListener('click', function () {
+        if (!root.confirm('删掉这份备份？删了就找不回来了。')) return;
+        Lib.clearBackup();
+        refreshAll();
+      });
+      brow.appendChild(bDel);
+      bnote.appendChild(brow);
+      host.appendChild(bnote);
     }
     const chapters = Lib.chapters();
     const hasAny = chapters.some(function (c) { return c.levels.length; });
@@ -1623,10 +1730,10 @@
       fr.readAsText(f);
       e.target.value = '';
     });
-    /* 单文件版才有的「内置关卡包」：再导入一份副本 */
+    /* 单文件版才有的「内置关卡包」按钮：有新版就更新，否则导入副本 */
     if ($('btn-seed-load')) {
       if (!Lib.seed()) $('btn-seed-load').hidden = true;
-      $('btn-seed-load').addEventListener('click', function () { App.importSeed(); });
+      $('btn-seed-load').addEventListener('click', function () { App.seedAction(); });
     }
 
     /* 编辑器面板 */
@@ -1719,33 +1826,38 @@
     if ($('brand-ver')) $('brand-ver').textContent = 'v' + (MP.VERSION || '?') + (root.MP_SINGLE_FILE ? ' · 单文件版' : '');
 
     /* 单文件版可能内嵌了关卡包（window.MP_SEED）：
-       只在「本机关卡库还是空的、而且没装过这一包」时装进去，绝不动玩家自己的关卡。
+       · 本机关卡库是空的 → 直接装进去（新玩家第一次打开）
+       · 本机已经有内容     → **绝不自动覆盖**，但如果内置包不是上次那一份，挂出「更新」提示
        注意：同一个浏览器里所有 file:// 页面是**共享 localStorage** 的，
        所以你自己电脑上打开打包好的文件，看到的仍然是你本机的关卡库 —— 这是浏览器行为，不是打包读盘。 */
     App.seed = null;
     const seed = Lib.seed();
     if (seed) {
       const tag = Lib.seedTag();
-      let seedLevels = 0;
-      (seed.chapters || []).forEach(function (c) {
-        (c.levels || []).forEach(function (id) { if (seed.levels[id]) seedLevels++; });
-      });
-      let applied = false;
-      if (Lib.seedDone() !== tag && Lib.count() === 0) {
+      const seen = Lib.seedDone();
+      const seedLevels = Lib.bundleCount(seed);
+      let applied = false, pending = false;
+      if (Lib.count() === 0) {
         Lib.importBundle(seed, { replace: true });
         applied = true;
         Lib.markSeedDone(tag);
-      } else if (Lib.seedDone() !== tag) {
-        Lib.markSeedDone(tag);   /* 玩家自己有内容，就不打扰了 */
+      } else if (seen !== tag) {
+        /* 本机有内容、而且这一份内置包和上次处理过的不是同一份（换了关卡 / 换了版本）*/
+        pending = true;
       }
       App.seed = {
         name: seed.name || '内置关卡包',
         chapters: (seed.chapters || []).length,
         levels: seedLevels,
         applied: applied,
+        pending: pending,
+        tag: tag,
         localBefore: Lib.count(),
       };
-      if ($('btn-seed-load')) $('btn-seed-load').hidden = false;
+      if ($('btn-seed-load')) {
+        $('btn-seed-load').hidden = false;
+        $('btn-seed-load').textContent = pending ? '⚡ 更新内置关卡包' : '导入内置关卡包';
+      }
     }
 
     /* 至少有一个大关 */
@@ -1777,6 +1889,9 @@
     if (App.seed && App.seed.applied) {
       App.toast('已载入内置关卡包：' + App.seed.chapters + ' 个大关 / ' +
         App.seed.levels + ' 关，去「▶ 游玩」里选关吧', 'ok');
+    } else if (App.seed && App.seed.pending) {
+      App.toast('这一份自带了新版关卡包（' + App.seed.chapters + ' 个大关 / ' + App.seed.levels +
+        ' 关），点选关界面里的「⚡ 更新到新版」就能换上', 'ok');
     }
     root.requestAnimationFrame(loop);
   };

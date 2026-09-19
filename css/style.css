@@ -275,3 +275,15 @@ kbd {
 .seed-note b { color: var(--accent); }
 .seed-note .sn-body { color: var(--dim); font-size: 12.5px; margin-top: 4px; }
 .seed-note .sn-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+/* 「内置关卡包有新版」提示：比普通说明条更醒目一点 */
+.seed-note.is-update {
+  background: linear-gradient(180deg, #20203a, #17182a);
+  border-color: #4b4370; border-left-color: var(--accent2);
+}
+.seed-note.is-update b { color: var(--accent2); }
+/* 换库前的备份条：低调，别抢戏 */
+.seed-note.is-backup {
+  background: #141a22; border-color: #2b3646; border-left-color: #46586f;
+  margin-top: -8px;
+}
+.seed-note.is-backup b { color: var(--dim); }

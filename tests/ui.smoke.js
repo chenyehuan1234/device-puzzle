@@ -213,10 +213,15 @@ ok(App.mode === 'play', '默认进入游玩模式');
 ok(App.level && App.level.name === '测试关卡', '默认载入关卡库里的第一关');
 /* 单文件版内嵌关卡包：库里已经有东西时，绝不能动玩家的关卡 */
 ok(Lib.seed() !== null, '读到了内置关卡包（MP_SEED）');
-eq(Lib.count(), 1, '库里已有内容 → 没有装内置关卡包');
+eq(Lib.count(), 1, '库里已有内容 → 没有自动装内置关卡包');
 ok(!Lib.get('SMOKE_L1'), '内置关卡没有被塞进库');
-ok(Lib.seedDone().indexOf('冒烟内置包') === 0, '但记住了这一包已经处理过：' + Lib.seedDone());
-ok(globalThis.document.getElementById('btn-seed-load').hidden === false, '有内置包时「导入内置关卡包」按钮可见');
+ok(Lib.seedDone() === '', '本机已有内容时**不**擅自标记「已处理」，留给玩家自己决定');
+ok(App.seed && App.seed.pending === true, '认出「这一份内置包和本机内容不是同一份」→ 挂更新提示（pending）');
+ok(Lib.seedTag().indexOf('冒烟内置包@2026-01-01#1.') === 0,
+  '内置包身份 = 包名@日期#关数.内容哈希：' + Lib.seedTag());
+ok(globalThis.document.getElementById('btn-seed-load').hidden === false, '有内置包时顶栏按钮可见');
+ok(globalThis.document.getElementById('btn-seed-load').textContent.indexOf('更新') >= 0,
+  '顶栏按钮改成「更新」文案：' + globalThis.document.getElementById('btn-seed-load').textContent);
 ok(typeof Lib.exportBundle === 'function' && typeof Lib.importBundle === 'function', '关卡包 API 存在');
 
 (async function main() {
@@ -835,6 +840,93 @@ ok(typeof Lib.exportBundle === 'function' && typeof Lib.importBundle === 'functi
   const moves0 = App.moves;
   dispatchWin('keydown', keyEv(' ', { target: { tagName: 'INPUT' } }));
   ok(App.moves === moves0 && App.mode === 'play', '在输入框里按空格不会触发撤回');
+
+  /* ==========================================================================
+   * 12. 内置关卡包：内容指纹 / 更新到新版 / 换库备份
+   *     （v0.6.1 修的坑：身份标签只到「包名@日期」，同一天导出的两份包
+   *       标签一模一样 → 换了关卡库页面却一直是旧的）
+   * ======================================================================= */
+  group('内置关卡包 / 内容指纹 / 换库备份');
+
+  const tagV1 = Lib.seedTag();
+  ok(tagV1.indexOf('#') > 0, '内置包身份里带内容指纹：' + tagV1);
+  eq(Lib.bundleCount(globalThis.MP_SEED), 1, 'bundleCount 数得清包里有几关');
+
+  /* 换一份「同一天导出、但内容不同」的包 —— 线上出问题的就是这个情形 */
+  globalThis.MP_SEED = {
+    format: 'mp-level-bundle', version: 1, name: '冒烟内置包', exportedAt: '2026-01-01',
+    chapters: [{ id: 'SMOKE_CH', name: '内置大关', levels: ['SMOKE_L1', 'SMOKE_L2'] }],
+    levels: {
+      SMOKE_L1: MP.buildLevel({ id: 'SMOKE_L1', name: '内置关卡', w: 5, h: 3, map: ['.....', '..sS.', '.....'] }),
+      SMOKE_L2: MP.buildLevel({ id: 'SMOKE_L2', name: '内置关卡 2', w: 5, h: 3, map: ['.....', '..cC.', '.....'] }),
+    },
+  };
+  const tagV2 = Lib.seedTag();
+  ok(tagV2 !== tagV1, '包名 / 导出日期都没变、只有内容变了 → 身份标签也必须不一样');
+  ok(tagV2.indexOf('#2.') > 0, '关数写进了标签：' + tagV2);
+  ok(Lib.seedTag() !== tagV1, '（这就是根因修复点）');
+
+  /* 换库前的状态 */
+  const keepId = Lib.list()[0].id;
+  Lib.markCleared(keepId);
+  const beforeCount = Lib.count();
+  ok(beforeCount >= 2, '换库前本机有 ' + beforeCount + ' 关');
+
+  Lib.clearSeedDone();
+  ok(Lib.seedDone() === '', '清掉「已处理」标记');
+
+  const realConfirm = globalThis.confirm;
+  globalThis.confirm = function () { return true; };
+  const rUpd = App.applySeedUpdate();
+  globalThis.confirm = realConfirm;
+
+  ok(!!rUpd, 'applySeedUpdate 换库成功');
+  eq(Lib.count(), 2, '换成了新内置包的 2 关（本机旧内容被替换）');
+  ok(Lib.seedDone() === tagV2, '换完记下新包身份，不再反复提醒');
+  ok(App.seed.applied === true && App.seed.pending === false, '提示状态归位');
+  ok(Lib.isCleared(keepId), '换库后通关进度按关卡 id 保住了（' + keepId + '）');
+
+  const binfo = Lib.backupInfo();
+  ok(!!binfo, '换库前自动留了备份');
+  eq(binfo.levels, beforeCount, '备份里是换库前的 ' + beforeCount + ' 关');
+  ok(binfo.note.indexOf('更新') >= 0, '备份记下了原因：' + binfo.note);
+
+  /* 「取消」时不能动库 */
+  Lib.clearSeedDone();
+  globalThis.confirm = function () { return false; };
+  const rCancel = App.applySeedUpdate();
+  globalThis.confirm = realConfirm;
+  ok(rCancel === null, '确认框点「取消」→ 什么都不做');
+  eq(Lib.count(), 2, '取消后本机还是原样');
+
+  /* 恢复备份（会先把「现在这一份」也备份下来，免得恢复错了回不去） */
+  globalThis.confirm = function () { return true; };
+  const rRes = App.restoreSeedBackup();
+  globalThis.confirm = realConfirm;
+  ok(!!rRes, 'restoreSeedBackup 恢复成功');
+  eq(Lib.count(), beforeCount, '回到备份时的 ' + beforeCount + ' 关');
+
+  /* 选关界面上的三种提示条 */
+  App.seed = { name: '冒烟内置包', chapters: 1, levels: 2, applied: false, pending: true, tag: tagV2 };
+  App.gotoSelect();
+  await frames(1);
+  let notes = globalThis.document.getElementById('play-chapters').children
+    .filter(function (c) { return c.className.indexOf('seed-note') >= 0; });
+  const updNote = notes.filter(function (n) { return n.className.indexOf('is-update') >= 0; })[0];
+  ok(!!updNote, '有新版时显示更醒目的「更新」提示条');
+  const updBtns = (updNote && updNote.children.filter(function (n) { return n.className.indexOf('sn-row') >= 0; })[0] || { children: [] }).children;
+  ok(updBtns.some(function (b) { return b.textContent.indexOf('更新到新版') >= 0; }), '提示条里有「更新到新版」按钮');
+  ok(updBtns.some(function (b) { return b.textContent.indexOf('先不动') >= 0; }), '提示条里有「先不动」按钮');
+  ok(updBtns.some(function (b) { return b.textContent.indexOf('副本') >= 0; }), '提示条里保留了「导入副本」按钮');
+  ok(notes.some(function (n) { return n.className.indexOf('is-backup') >= 0; }), '有备份时显示「恢复这份备份」条');
+
+  /* 「先不动」：只记下已处理，不动库 */
+  const laterBtn = updBtns.filter(function (b) { return b.textContent.indexOf('先不动') >= 0; })[0];
+  const countBeforeLater = Lib.count();
+  laterBtn.dispatch('click');
+  ok(Lib.seedDone() === tagV2, '「先不动」记下已处理，不再反复提醒');
+  eq(Lib.count(), countBeforeLater, '「先不动」不会改动关卡库');
+  ok(App.seed.pending === false, '提示条收起');
 
   console.log('\n========================================');
   console.log('通过 ' + pass + ' 项，失败 ' + failCount + ' 项');

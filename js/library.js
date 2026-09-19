@@ -420,13 +420,86 @@
     const s = root.MP_SEED;
     return (s && s.levels && s.chapters) ? s : null;
   };
+
+  /* 32 位字符串哈希（FNV-1a），只用来做「内容有没有变」的判断，不用于安全场景 */
+  function hash32(str) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+    }
+    return h.toString(36);
+  }
+
+  /* 关卡包里到底有多少关（章节引用了、而且数据真的在的才算） */
+  Lib.bundleCount = function (b) {
+    let lv = 0;
+    ((b && b.chapters) || []).forEach(function (c) {
+      ((c && c.levels) || []).forEach(function (id) { if (b.levels && b.levels[id]) lv++; });
+    });
+    return lv;
+  };
+
+  /* 关卡包的内容指纹：大关结构 + 关卡数据整体哈希。
+     为什么需要它：同一天导出的两份包，name 和 exportedAt 完全一样（exportedAt 只到天），
+     光靠「包名@日期」根本分辨不出内容有没有变 —— 这正是「换了关卡库但页面还是旧的」的根因。 */
+  Lib.bundleFingerprint = function (b) {
+    if (!b) return '';
+    const shape = (b.chapters || []).map(function (c) {
+      return [String(c.id), String(c.name), (c.levels || []).slice()];
+    });
+    return Lib.bundleCount(b) + '.' + hash32(JSON.stringify(shape) + '|' + JSON.stringify(b.levels || {}));
+  };
+
+  /* 内置包的身份标签：包名@导出日期#关数.内容哈希 */
   Lib.seedTag = function () {
     const s = Lib.seed();
-    return s ? (String(s.name || 'seed') + '@' + String(s.exportedAt || '')) : '';
+    if (!s) return '';
+    return String(s.name || 'seed') + '@' + String(s.exportedAt || '') + '#' + Lib.bundleFingerprint(s);
   };
   const SKEY = 'mp.seed.v1';
   Lib.seedDone = function () { try { return root.localStorage.getItem(SKEY) || ''; } catch (e) { return ''; } };
   Lib.markSeedDone = function (tag) { try { root.localStorage.setItem(SKEY, String(tag)); } catch (e) {} };
+  Lib.clearSeedDone = function () { try { root.localStorage.removeItem(SKEY); } catch (e) {} };
+
+  /* ------------------------------------------------- 用关卡包替换整个库 / 备份 */
+  /* opt.replace 会清空 chapters + levels，但**通关进度是另一个键（mp.progress.v1）**，
+     按关卡 id 记的 —— 所以只要新包里关卡 id 没变，进度就自动跟着走。 */
+  Lib.replaceWith = function (bundle) {
+    const before = Lib.count();
+    const r = Lib.importBundle(bundle, { replace: true });
+    r.before = before;
+    return r;
+  };
+
+  /* 替换前的兜底备份（存在 localStorage 里，不进关卡库本身） */
+  const BKEY = 'mp.backup.v1';
+  Lib.saveBackup = function (note) {
+    try {
+      const b = Lib.exportBundle(null, '本机关卡库备份');
+      const rec = { at: Date.now(), note: String(note || ''), bundle: b };
+      root.localStorage.setItem(BKEY, JSON.stringify(rec));
+      return { at: rec.at, note: rec.note, chapters: b.chapters.length, levels: Lib.bundleCount(b) };
+    } catch (e) { return null; }
+  };
+  Lib.backupInfo = function () {
+    try {
+      const rec = JSON.parse(root.localStorage.getItem(BKEY) || 'null');
+      if (!rec || !rec.bundle) return null;
+      return {
+        at: rec.at, note: rec.note || '',
+        chapters: (rec.bundle.chapters || []).length,
+        levels: Lib.bundleCount(rec.bundle),
+        bundle: rec.bundle,
+      };
+    } catch (e) { return null; }
+  };
+  Lib.restoreBackup = function () {
+    const info = Lib.backupInfo();
+    if (!info) return null;
+    return Lib.replaceWith(info.bundle);
+  };
+  Lib.clearBackup = function () { try { root.localStorage.removeItem(BKEY); } catch (e) {} };
 
   /* ---------------------------------------------------------------- 序列化 */
   Lib.serialize = function (level) {
