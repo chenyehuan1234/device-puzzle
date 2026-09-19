@@ -33,8 +33,10 @@ Remove-Item $dump, $err -ErrorAction SilentlyContinue
 $checks = @(
   @{ name = '页面里有内联 <style>';      pass = ($txt -match '<style>') },
   @{ name = '没有任何外部 js 引用';      pass = ($txt -notmatch '<script src=') },
-  @{ name = '调色板真的建出来了';        pass = ([regex]::Matches($txt, 'class="pal-btn"').Count -ge 40) },
-  @{ name = '两种新对角交换器在里面';    pass = (($txt -match '主对角（左上↔右下）') -and ($txt -match '副对角（左下↔右上）')) },
+  @{ name = '调色板真的建出来了';        pass = ([regex]::Matches($txt, 'class="pal-btn[" ]').Count -ge 50) },
+  @{ name = '两种对角交换器在里面';      pass = (($txt -match '主对角（左上↔右下）') -and ($txt -match '副对角（左下↔右上）')) },
+  @{ name = '四种拐角交换器在里面';      pass = (($txt -match '上右（上↔右）') -and ($txt -match '上左（上↔左）') -and ($txt -match '下左（下↔左）') -and ($txt -match '下右（下↔右）')) },
+  @{ name = '解法录制面板在里面';        pass = (($txt -match 'id="sol-info"') -and ($txt -match 'id="btn-sol-replay"')) },
   @{ name = '关卡信息栏真的渲出来了';    pass = ([regex]::Matches($txt, 'tree-empty|tree-item|tree-chapter').Count -ge 1) },
   @{ name = '顶栏写了版本号 + 单文件版'; pass = ($txt -match 'v0\.\d+\.\d+ · 单文件版') },
   @{ name = 'canvas 已经按舞台尺寸建好'; pass = ($txt -match 'id="board"[^>]*width="[1-9]\d{2,}"') }

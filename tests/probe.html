@@ -61,6 +61,7 @@
           <canvas id="board"></canvas>
           <div class="win-banner" id="win-banner" hidden><div class="win-card">
             <div class="win-title">通 关 ！</div><div class="win-sub" id="win-sub"></div>
+            <div class="row center"><button class="btn" id="btn-win-save-sol" hidden>💾 记下这个解法</button></div>
             <div class="row center">
               <button class="btn primary" id="btn-win-next">下一关 (Enter)</button>
               <button class="btn" id="btn-win-again">重玩 (R)</button>
@@ -105,6 +106,10 @@
       <div class="panel" id="panel-edit" hidden>
         <div class="sec"><div class="sec-title">笔刷<small>右键有东西的格子=擦掉 / 右键空地=放下笔刷</small></div><div id="palette" class="palette"></div></div>
         <div class="sec"><div class="sec-title">关卡体检</div><div id="checkup" class="checkup"></div></div>
+        <div class="sec"><div class="sec-title">解法录制</div>
+          <div class="note" id="sol-info">还没记录解法</div>
+          <div class="row"><button id="btn-sol-replay" class="btn">▶ 回放解法</button><button id="btn-sol-clear" class="btn">清空解法</button></div>
+        </div>
         <div class="sec"><div class="sec-title">快捷键</div><div class="keys"><div><kbd>S</kbd> 试玩</div><div><kbd>Ctrl+S</kbd> 保存并新建</div><div><kbd>Esc</kbd> 放下笔刷</div></div></div>
       </div>
     </aside>
@@ -129,6 +134,7 @@
 (function () {
   var out = [];
   var errs = [];
+  var probeSavedId = null;
   window.onerror = function (m, s, l, c) { errs.push(m + ' @' + l + ':' + c); };
   window.addEventListener('unhandledrejection', function (e) { errs.push('promise: ' + e.reason); });
   function ok(c, m) { out.push((c ? 'PASS ' : 'FAIL ') + m); }
@@ -191,8 +197,8 @@
 
     /* 布局 */
     ok(document.getElementById('board').width > 0, 'canvas 位图已建立');
-    ok(document.querySelectorAll('.pal-btn').length >= 46,
-      '调色板按钮数 = ' + document.querySelectorAll('.pal-btn').length + '（含 8 种交换器）');
+    ok(document.querySelectorAll('.pal-btn').length >= 50,
+      '调色板按钮数 = ' + document.querySelectorAll('.pal-btn').length + '（含 12 种交换器）');
     ok(/^v\d+\.\d+\.\d+/.test(document.getElementById('brand-ver').textContent),
       '顶栏版本号 = ' + document.getElementById('brand-ver').textContent);
 
@@ -379,12 +385,14 @@
     wheel(120);
     ok(App.brush.s === 'dl_ur', '滚轮：ur_dr → ul_dr → dl_ur（新的两种都能滚到）');
 
-    /* 需求：调色板里能看到两种新交换器 */
-    var diagBtns = 0;
+    /* 需求：调色板里能看到两种对角 + 四种拐角交换器 */
+    var diagBtns = 0, cornerBtns = 0;
     Array.prototype.forEach.call(document.querySelectorAll('.pal-btn .lbl'), function (el) {
       if (el.textContent.indexOf('主对角') >= 0 || el.textContent.indexOf('副对角') >= 0) diagBtns++;
+      if (/上右（上↔右）|上左（上↔左）|下左（下↔左）|下右（下↔右）/.test(el.textContent)) cornerBtns++;
     });
-    ok(diagBtns === 2, '调色板里有「主对角 / 副对角」两个新交换器（找到 ' + diagBtns + ' 个）');
+    ok(diagBtns === 2, '调色板里有「主对角 / 副对角」两个交换器（找到 ' + diagBtns + ' 个）');
+    ok(cornerBtns === 4, '调色板里有「上右 / 上左 / 下左 / 下右」四个拐角交换器（找到 ' + cornerBtns + ' 个）');
 
     /* 新交换器的图标：主对角交换器的两条线段应当沿「左上—右下」，不该出现在另一条对角线上 */
     App.setBrush({ kind: 'device', type: 'swap', s: 'ul_dr' });
@@ -447,6 +455,7 @@
 
     /* 需求 2：B 一键返回编辑；S 一键试玩；Ctrl+S 保存并新建下一关 */
     var savedId = App.editLevel.id;
+    probeSavedId = savedId;
     key('b');
     ok(App.mode === 'edit' && App.fromEdit === false, 'B 键 = 从试玩返回编辑');
     ok(disp('edit-bar') !== 'none' && disp('play-bar') === 'none', '编辑操作条回来了');
@@ -522,8 +531,52 @@
       ok(window.MPSfx.enabled === true, '重新打开音效开关生效');
       ok(wasOn === true, '音效默认是开的');
 
-      finish();
+      replayPhase();
     }, 30);
+  }
+
+  /* ---------------------------------------------------------------- 解法回放段 */
+  function replayPhase() {
+    var App = window.MPApp, Lib = window.MPLibrary;
+    var L = Lib.get(probeSavedId);
+    ok(!!L, '拿得到刚才编辑的那一关');
+    /* 这一关的解法就是「点一下 (3,3) 的旋转器」 */
+    L.solution = [[3, 3]];
+    Lib.put(L);
+
+    App.openLevelInEditor(probeSavedId);
+    step(1);
+    ok(!!(App.editLevel.solution && App.editLevel.solution.length === 1), '关卡里读到 1 步解法');
+    ok(document.getElementById('btn-sol-replay').disabled === false, '有解法时「回放解法」按钮可用');
+    ok(document.getElementById('sol-info').textContent.indexOf('1') >= 0,
+      '解法面板显示步数：' + document.getElementById('sol-info').textContent);
+    ok(document.getElementById('checkup').textContent.indexOf('解法') >= 0, '体检里有解法一行');
+
+    document.getElementById('btn-sol-replay').click();
+    ok(App.mode === 'play' && !!App.replay, '点「回放解法」后进入试玩并开始回放');
+
+    /* 无头虚拟时间下 rAF 不一定在推进，这里手动喂帧，模拟真实浏览器的 60fps */
+    var driver = setInterval(function () { step(2); }, 16);
+
+    setTimeout(function () {
+      clearInterval(driver);
+      ok(App.won === true, '回放自己跑到底 → 通关');
+      ok(App.replay === null, '回放结束后状态清空');
+      ok(disp('win-banner') !== 'none', '回放通关也会弹通关横幅');
+      ok(document.getElementById('btn-win-save-sol').hidden === false, '通关横幅上有「记下这个解法」按钮');
+
+      /* 通关横幅上的「记下这个解法」按钮真的能存 */
+      document.getElementById('btn-win-save-sol').click();
+      var after = Lib.get(probeSavedId);
+      ok(!!(after.solution && after.solution.length === 1), '点按钮后解法存进了关卡库');
+
+      /* 清空解法 */
+      window.MPApp.setMode('edit');
+      document.getElementById('btn-sol-clear').click();
+      ok(!window.MPApp.editLevel.solution, '「清空解法」把工作副本里的解法清掉了');
+      ok(document.getElementById('btn-sol-replay').disabled === true, '清空后回放按钮变灰');
+      finish();
+    }, 1500);
   }
 
   window.addEventListener('load', function () {

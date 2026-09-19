@@ -369,22 +369,40 @@ ok(App.level && App.level.name === '测试关卡', '默认载入关卡库里的�
   App.cycleBrush(1);
   ok(App.brush.kind === 'none', '空手：滚轮也不改变笔刷');
 
-  /* —— 需求：新增两种对角线交换器 —— */
-  group('新增两种对角交换器（左上↔右下 / 左下↔右上）');
-  eq(MP.DEVICES.swap.states.length, 8, '交换器共 8 种状态');
+  /* —— 需求：交换器新增四种「拐角」（上右 / 上左 / 下左 / 下右） —— */
+  group('交换器 12 种：新增四个拐角');
+  eq(MP.DEVICES.swap.states.length, 12, '交换器共 12 种状态');
   const swapBtns = paletteBrushes().filter(function (b) {
     return b.kind === 'device' && b.type === 'swap';
   });
-  eq(swapBtns.length, 8, '调色板里交换器有 8 个按钮');
+  eq(swapBtns.length, 12, '调色板里交换器有 12 个按钮');
+  ['u_r', 'u_l', 'd_l', 'd_r'].forEach(function (s) {
+    ok(!!MP.SWAP_NAME[s], '拐角交换器有名字：' + s + ' = ' + MP.SWAP_NAME[s]);
+    ok(swapBtns.some(function (b) { return b.s === s; }), '调色板里有 ' + s + ' 这个按钮');
+  });
   App.setBrush({ kind: 'device', type: 'swap', s: 'ur_dr' });
   App.cycleBrush(1);
-  eq(App.brush.s, 'ul_dr', '滚轮能滚到新增的「主对角」');
+  eq(App.brush.s, 'ul_dr', '滚轮能滚到「主对角」');
   App.cycleBrush(1);
   eq(App.brush.s, 'dl_ur', '再滚到「副对角」');
   App.cycleBrush(1);
   eq(App.brush.s, 'ud', '绕回开头');
-  ok(MP.SWAP_NAME.ul_dr.indexOf('主对角') === 0 && MP.SWAP_NAME.dl_ur.indexOf('副对角') === 0,
-    '两种新交换器有名字：' + MP.SWAP_NAME.ul_dr + ' / ' + MP.SWAP_NAME.dl_ur);
+  /* 拐角换：交换的是设备相邻的两条边（上 ↔ 右），不是对角 */
+  const Lc = Lib.blank(5, 5, '拐角');
+  Lc.cells[MP.idx(Lc, 2, 1)].item = { k: 'square' };   /* 设备的上方 */
+  Lc.cells[MP.idx(Lc, 3, 2)].item = { k: 'circle' };   /* 设备的右侧 */
+  Lc.cells[MP.idx(Lc, 2, 2)].item = MP.device('swap', 'u_r');
+  const actC = RULES.computeAction(Lc, 2, 2);
+  ok(actC.ok, 'u_r 交换成功');
+  RULES.applyAll(Lc, actC);
+  ok(MP.itemAt(Lc, 3, 2).k === 'square' && MP.itemAt(Lc, 2, 1).k === 'circle', 'u_r：上格与右格互换');
+  ok(MP.itemAt(Lc, 1, 1) === null && MP.itemAt(Lc, 3, 3) === null, 'u_r 不碰两个角');
+  /* 只有一侧有东西也能换 */
+  const Lc2 = Lib.blank(5, 5, '拐角2');
+  Lc2.cells[MP.idx(Lc2, 2, 3)].item = { k: 'circle' };  /* 下 */
+  Lc2.cells[MP.idx(Lc2, 2, 2)].item = MP.device('swap', 'd_l');
+  const actC2 = RULES.computeAction(Lc2, 2, 2);
+  ok(actC2.ok && actC2.moves.length === 1, 'd_l：只有下边有东西时也能换（1 个物品移动）');
 
   /* —— 需求：最小尺寸不再是 3 格 —— */
   group('最小尺寸：1×1 也要能用');
@@ -433,7 +451,7 @@ ok(App.level && App.level.name === '测试关卡', '默认载入关卡库里的�
   App.rotateBrush(false);
   eq(App.brush.s, 'lr', 'R 键顺时针转笔刷：ud → lr');
   App.cycleBrush(1);
-  eq(App.brush.s, 'ul_ur', '滚轮轮换状态');
+  eq(App.brush.s, 'u_r', '滚轮轮换状态');
 
   await frames(3);
   ok(true, '编辑模式渲染不抛异常');
@@ -585,8 +603,69 @@ ok(App.level && App.level.name === '测试关卡', '默认载入关卡库里的�
   ok(App.editLevel && MP.itemAt(App.editLevel, 2, 2) && MP.itemAt(App.editLevel, 2, 2).k === 'square',
     '试玩回来编辑器里的内容原样还在');
 
-  group('需求 5/7：自动命名 + Ctrl+S 保存并新建同尺寸下一关');
-  const chX = Lib.chapters()[0].id;
+  group('解法录制 / 回放');
+  /* test1 是「点一下 (5,2) 的活塞就通关」的一关 */
+  App.startLevel('test1');
+  await frames(2);
+  eq(App.playLog.length, 0, '开局时解法记录是空的');
+  clickCell(5, 2);
+  await frames(30, 20);
+  ok(App.won === true, '手动通关');
+  eq(App.playLog, [[5, 2]], '点击序列被记下来了');
+  ok(globalThis.document.getElementById('btn-win-save-sol').hidden === false,
+    '通关横幅上出现了「记下这个解法」按钮');
+  App.saveSolution();
+  eq(Lib.get('test1').solution, [[5, 2]], '解法已存进关卡库');
+  ok(Lib.serialize(Lib.get('test1')).indexOf('solution') >= 0, '导出的 JSON 里带解法');
+  const solRT = Lib.importText(Lib.serialize(Lib.get('test1')));
+  eq(solRT.level.solution, [[5, 2]], 'JSON 往返保留解法');
+  const badSol = Lib.importText('{"w":3,"h":3,"cells":[],"solution":[[0,0],[9,9],"x",[1]]}');
+  eq(badSol.level.solution, [[0, 0]], '解法里非法 / 越界的步会被丢掉');
+  ok(badSol.warnings.length > 0, '并且给出修正警告');
+
+  /* 撤销要跟着回退解法记录 */
+  App.startLevel('test1');
+  await frames(2);
+  clickCell(5, 2);
+  await frames(30, 20);
+  eq(App.playLog.length, 1, '记了 1 步');
+  App.undoPlayMove();
+  eq(App.playLog.length, 0, '撤销后解法记录也退一步');
+  App.restart();
+  eq(App.playLog.length, 0, '重开后解法记录清空');
+
+  /* 一键回放：用编辑器里的内容开局，逐步走完 */
+  App.setMode('edit');
+  App.setEditLevel(Lib.get('test1'));
+  ok(globalThis.document.getElementById('btn-sol-replay').disabled === false, '有解法时「回放解法」可用');
+  ok(App.startReplay() === true, 'startReplay 返回成功');
+  ok(App.mode === 'play' && !!App.replay, '回放时进入游玩模式并挂着回放状态');
+  let rguard = 0, st = 'ok';
+  while (st === 'ok' && rguard++ < 10) {
+    st = App.replayStep();
+    await frames(40, 20);
+  }
+  if (st === 'ok' || st === 'wait') st = App.replayStep();
+  eq(st, 'done', '回放走完 → done');
+  ok(App.won === true, '回放到底确实通关了');
+  ok(App.replay === null, '回放结束后状态已清空');
+
+  /* 解法过期（关卡改过）要优雅失败，而不是把页面搞崩 */
+  App.setMode('edit');
+  App.setEditLevel(Lib.get('test1'));
+  App.editLevel.solution = [[0, 0]];      /* (0,0) 是空地，点了会冲突 */
+  App.startReplay();
+  eq(App.replayStep(), 'fail', '回放遇到冲突 → fail');
+  ok(App.replay === null, '失败后回放状态也清空');
+
+  App.setMode('edit');
+  App.setEditLevel(Lib.get('test1'));
+  App.clearSolution();
+  ok(!App.editLevel.solution, '清空解法生效');
+  ok(globalThis.document.getElementById('btn-sol-replay').disabled === true, '没有解法时回放按钮禁用');
+  App.saveLevel(false);
+
+  group('需求 5/7：自动命名 + Ctrl+S 保存并新建同尺寸下一关');  const chX = Lib.chapters()[0].id;
   const nBefore = Lib.chapters().filter(function (c) { return c.id === chX; })[0].levels.length;
   App.newLevel(chX);
   eq(App.editLevel.name, '1-' + (nBefore + 1), '新建关卡自动命名成 1-N');

@@ -101,6 +101,9 @@
               <div class="win-title">通 关 ！</div>
               <div class="win-sub" id="win-sub"></div>
               <div class="row center">
+                <button class="btn" id="btn-win-save-sol" hidden>💾 记下这个解法</button>
+              </div>
+              <div class="row center">
                 <button class="btn primary" id="btn-win-next">下一关 (Enter)</button>
                 <button class="btn" id="btn-win-again">重玩 (R)</button>
                 <button class="btn" id="btn-win-select">返回选关</button>
@@ -170,6 +173,19 @@
         <div class="sec">
           <div class="sec-title">关卡体检</div>
           <div id="checkup" class="checkup"></div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">解法录制 <small>确认自己画的关确实可解</small></div>
+          <div class="note" id="sol-info">还没记录解法</div>
+          <div class="row">
+            <button id="btn-sol-replay" class="btn">▶ 回放解法</button>
+            <button id="btn-sol-clear" class="btn">清空解法</button>
+          </div>
+          <div class="hint" style="margin-top:7px;font-size:11.5px">
+            怎么记录：按 <kbd>S</kbd> 试玩 → 通关 → 点通关横幅上的「💾 记下这个解法」。
+            之后按 <kbd>B</kbd> 回到编辑器，<kbd>Ctrl+S</kbd> 存进关卡就行。
+          </div>
         </div>
 
         <div class="sec">

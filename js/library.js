@@ -302,22 +302,25 @@
 
   /* ---------------------------------------------------------------- 序列化 */
   Lib.serialize = function (level) {
-    return JSON.stringify({
+    const o = {
       name: level.name,
       w: level.w,
       h: level.h,
       note: level.note || '',
       cells: level.cells.map(function (c) {
-        const o = {};
-        if (c.t === MP.WALL) o.t = 1;
-        if (c.goal) o.goal = c.goal;
+        const e = {};
+        if (c.t === MP.WALL) e.t = 1;
+        if (c.goal) e.goal = c.goal;
         if (c.item) {
-          if (MP.isDevice(c.item)) o.item = { k: 'device', type: c.item.type, s: c.item.s };
-          else o.item = { k: c.item.k };
+          if (MP.isDevice(c.item)) e.item = { k: 'device', type: c.item.type, s: c.item.s };
+          else e.item = { k: c.item.k };
         }
-        return o;
+        return e;
       }),
-    }, null, 1);
+    };
+    /* 解法（点击序列）跟着导出，换台机器回放也还在 */
+    if (level.solution && level.solution.length) o.solution = level.solution.map(function (p) { return [p[0], p[1]]; });
+    return JSON.stringify(o, null, 1);
   };
 
   Lib.normalize = function (raw) {
@@ -330,7 +333,20 @@
     L.id = raw.id || null;
     L.chapter = raw.chapter || null;
     L.note = String(raw.note || '');
-    if (raw.solution && Array.isArray(raw.solution)) L.solution = raw.solution;
+    if (raw.solution && Array.isArray(raw.solution)) {
+      /* 解法：一串 [x, y] 点击坐标。越界 / 格式不对的条目直接丢掉并提示 */
+      const sol = [];
+      let badSol = 0;
+      raw.solution.forEach(function (p) {
+        if (!Array.isArray(p) || p.length < 2) { badSol++; return; }
+        const px = Math.round(Number(p[0])), py = Math.round(Number(p[1]));
+        if (!isFinite(px) || !isFinite(py) || px < 0 || py < 0 || px >= w || py >= h) { badSol++; return; }
+        sol.push([px, py]);
+      });
+      if (badSol) warn.push('解法里有 ' + badSol + ' 步坐标非法，已丢弃');
+      if (sol.length > 2000) { sol.length = 2000; warn.push('解法超过 2000 步，已截断'); }
+      if (sol.length) L.solution = sol;
+    }
 
     const cells = Array.isArray(raw.cells) ? raw.cells : [];
     if (cells.length !== w * h) warn.push('cells 数量应为 ' + (w * h) + '，实际 ' + cells.length + '（已按空位补齐 / 截断）');

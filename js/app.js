@@ -56,6 +56,8 @@
     brush: { kind: 'device', type: 'push', s: 'R' },
     undoPlay: [],
     undoEdit: [],
+    playLog: [],        /* 本次游玩点过的格子序列（= 解法） */
+    replay: null,       /* 正在回放解法时的状态 */
     moves: 0,
     won: false,
     busy: false,
@@ -210,6 +212,8 @@
     App.base = MP.cloneLevel(L);
     App.level = MP.cloneLevel(L);
     App.undoPlay = [];
+    App.playLog = [];
+    App.replay = null;
     App.moves = 0;
     App.won = false;
     App.hover = null;
@@ -235,6 +239,7 @@
 
   /* 回到选关界面（从编辑器里点也会切到游玩页签） */
   App.gotoSelect = function () {
+    App.replay = null;
     App.screen = 'select';
     FX.clear();
     hideWin();
@@ -258,9 +263,11 @@
   App.playtest = function () {
     const L = App.editLevel;
     if (!L) return;
+    App.replay = null;
     App.base = MP.cloneLevel(L);
     App.level = MP.cloneLevel(L);
     App.undoPlay = [];
+    App.playLog = [];
     App.moves = 0; App.won = false; App.hover = null;
     FX.clear(); hideWin();
     App.fromEdit = true;
@@ -305,6 +312,7 @@
     /* 快照 → 落子（状态立即落，动画只是"回放"过渡） */
     App.undoPlay.push(MP.cloneLevel(L));
     if (App.undoPlay.length > 400) App.undoPlay.shift();
+    App.playLog.push([x, y]);        /* 记下这一下，通关后就是这一关的解法 */
 
     RULES.applyMoves(L, act);
     RULES.applyStates(L, act);
@@ -339,6 +347,7 @@
     if (App.busy) return;
     if (!App.undoPlay.length) { App.toast('没有可撤销的操作'); return; }
     App.level = App.undoPlay.pop();
+    if (App.playLog.length) App.playLog.pop();   /* 解法记录也跟着退一步 */
     App.moves = Math.max(0, App.moves - 1);
     App.won = false;
     hideWin();
@@ -351,6 +360,7 @@
     if (!App.base) return;
     App.level = MP.cloneLevel(App.base);
     App.undoPlay = [];
+    App.playLog = [];
     App.moves = 0;
     App.won = false;
     FX.clear();
@@ -364,7 +374,8 @@
     App.won = true;
     const L = App.level;
     const isReal = !!(L && L.id && L.id !== '__sandbox__');
-    if (isReal) Lib.markCleared(L.id);          /* 记通关进度 */
+    /* 回放解法时不记通关进度（那是在验证自己画的关，不是在玩） */
+    if (isReal && !App.replay) Lib.markCleared(L.id);
     App.nextId = isReal ? Lib.nextLevel(L.id) : null;
     sound('win');
 
@@ -376,6 +387,12 @@
           (isReal ? (App.nextId ? '　·　按 Enter 或点下面按钮进入下一关' : '　·　已经是最后一关，厉害！') : '');
       }
       if ($('btn-win-next')) $('btn-win-next').hidden = !App.nextId;
+      /* 「记下这个解法」：这一局的点击序列存进关卡，以后可以一键回放验证 */
+      const canSave = App.playLog.length > 0 && isReal;
+      if ($('btn-win-save-sol')) {
+        $('btn-win-save-sol').hidden = !canSave;
+        if (canSave) $('btn-win-save-sol').textContent = '💾 记下这个解法（' + App.playLog.length + ' 步）';
+      }
       b.hidden = false;
     }
     renderTree();
@@ -438,8 +455,9 @@
     }
     if (s) {
       const a = MP.analyze(L);
+      const solN = (App.mode === 'edit' && L.solution && L.solution.length) ? '　·　解法 ' + L.solution.length + ' 步' : '';
       s.textContent = L.w + ' × ' + L.h + '　·　正方形 ' + a.squares + ' / 圆形 ' + a.circles +
-        '　·　设备 ' + a.devices + (App.mode === 'edit' ? '　·　编辑中' : '');
+        '　·　设备 ' + a.devices + solN + (App.mode === 'edit' ? '　·　编辑中' : '');
     }
     const fr = $('foot-right');
     if (fr) fr.textContent = App.mode === 'play'
@@ -470,9 +488,128 @@
   }
 
   /* ==========================================================================
+   * 三·五、解法录制 / 回放
+   * --------------------------------------------------------------------------
+   * 试玩或游玩时，每一次成功的点击都会记进 App.playLog（撤回会跟着退一格）。
+   * 通关后可以把这段序列存进关卡的 solution 字段 —— 以后就能一键回放：
+   * 既能确认「我画的这一关确实可解」，也能当作给玩家的提示。
+   * ======================================================================= */
+  function validSolution(sol) {
+    return !!(sol && sol.length && sol[0] && typeof sol[0][0] === 'number');
+  }
+
+  /* 把这一局的点击序列存进关卡 */
+  App.saveSolution = function () {
+    const log = App.playLog;
+    if (!log || !log.length) { App.toast('这一局还没点过设备，没有解法可记', 'bad'); return false; }
+    const sol = log.map(function (p) { return [p[0], p[1]]; });
+
+    if (App.fromEdit) {
+      /* 试玩中：记到编辑器的工作副本上，Ctrl+S 才会真正落库 */
+      if (!App.editLevel) return false;
+      App.editLevel.solution = sol;
+      syncSolutionUI();
+      updateCheckup();
+      updateTitle();
+      App.toast('解法已记到编辑器里（' + sol.length + ' 步），按 B 回去按 Ctrl+S 存进关卡', 'ok');
+      return true;
+    }
+
+    const L = App.level;
+    if (!L || !L.id || L.id === '__sandbox__') { App.toast('沙盒不算关卡，解法没地方放', 'bad'); return false; }
+    /* 注意：App.level 是「玩到一半」的棋盘，不能直接存回去，
+       要拿库里那一份原始关卡，只把 solution 换上。 */
+    const fresh = Lib.get(L.id);
+    if (!fresh) return false;
+    fresh.solution = sol;
+    Lib.put(fresh);
+    App.toast('解法已存进「' + fresh.name + '」（' + sol.length + ' 步）', 'ok');
+    refreshAll();
+    return true;
+  };
+
+  App.clearSolution = function () {
+    const L = App.editLevel;
+    if (!L) return;
+    if (!validSolution(L.solution)) { App.toast('这一关还没有记录解法'); return; }
+    App.snapshotEdit();
+    L.solution = null;
+    syncSolutionUI();
+    updateCheckup();
+    updateTitle();
+    App.toast('已清空这一关的解法');
+  };
+
+  /* 开局并准备好回放（不自己跑，方便测试逐步驱动） */
+  App.startReplay = function (sol) {
+    const L = App.editLevel;
+    const use = sol || (L && L.solution);
+    if (!validSolution(use)) {
+      App.toast('这一关还没有记录解法：先试玩通关一次，点通关横幅上的「记下这个解法」', 'bad');
+      return false;
+    }
+    App.playtest();
+    App.replay = {
+      steps: use.map(function (p) { return [p[0], p[1]]; }),
+      i: 0,
+      total: use.length,
+    };
+    setHint('正在回放解法：0 / ' + use.length + '（按 Esc 或 B 可以中断）');
+    return true;
+  };
+
+  /* 走一步。返回 'ok' / 'wait'（动画没播完）/ 'done' / 'fail' / 'idle' */
+  App.replayStep = function () {
+    const rep = App.replay;
+    if (!rep) return 'idle';
+    if (App.busy || FX.busy()) return 'wait';
+    if (rep.i >= rep.steps.length) {
+      App.replay = null;
+      const win = RULES.isWin(App.level);
+      App.toast(win ? ('✓ 解法回放完毕（' + rep.total + ' 步），这一关确实可解')
+                    : '✗ 回放完了但没通关：这一关可能改过了，解法已过期', win ? 'ok' : 'bad');
+      return win ? 'done' : 'fail';
+    }
+    const p = rep.steps[rep.i];
+    const act = RULES.computeAction(App.level, p[0], p[1]);
+    if (!act || !act.ok) {
+      App.replay = null;
+      App.toast('✗ 回放到第 ' + (rep.i + 1) + ' 步就冲突了（' +
+        ((act && act.reason) || '这一格没有设备') + '），解法已过期', 'bad');
+      return 'fail';
+    }
+    rep.i++;
+    App.activate(p[0], p[1]);
+    setHint('正在回放解法：' + rep.i + ' / ' + rep.total + '（按 Esc 或 B 可以中断）');
+    return 'ok';
+  };
+
+  /* 从「回放解法」按钮走这里：自己按节奏跑完 */
+  App.runReplay = function () {
+    if (!App.startReplay()) return false;
+    const loop = function () {
+      if (!App.replay) return;
+      const s = App.replayStep();
+      if (s === 'done' || s === 'fail' || s === 'idle') return;
+      root.setTimeout(loop, s === 'wait' ? 80 : (App.animOn ? 240 : 30));
+    };
+    loop();
+    return true;
+  };
+
+  App.replayStop = function (quiet) {
+    if (!App.replay) return false;
+    App.replay = null;
+    if (!quiet) App.toast('已中断回放');
+    return true;
+  };
+
+  /* ==========================================================================
    * 四、编辑器
    * ======================================================================= */
   function activeLevel() { return App.mode === 'edit' ? App.editLevel : App.level; }
+
+
 
   App.setEditLevel = function (L) {
     App.editLevel = L;
@@ -694,8 +831,23 @@
     App.toast('已删除');
   };
 
+  /* 解法相关的按钮 / 文字状态 */
+  function syncSolutionUI() {
+    const L = App.editLevel;
+    const has = !!(L && L.solution && L.solution.length);
+    if ($('btn-sol-replay')) $('btn-sol-replay').disabled = !has;
+    if ($('btn-sol-clear')) $('btn-sol-clear').disabled = !has;
+    if ($('sol-info')) {
+      $('sol-info').textContent = has
+        ? ('✓ 已记录 ' + L.solution.length + ' 步解法，可以一键回放验证')
+        : '还没记录解法：试玩通关一次，点通关横幅上的「💾 记下这个解法」';
+    }
+  }
+  App.syncSolutionUI = syncSolutionUI;
+
   function updateCheckup() {
     const box = $('checkup');
+    syncSolutionUI();
     if (!box || !App.editLevel) return;
     const a = MP.analyze(App.editLevel);
     const lines = [];
@@ -703,6 +855,12 @@
     lines.push('<div>圆形 <b>' + a.circles + '</b> ／ 圆形目标 <b>' + a.circleGoals + '</b></div>');
     lines.push('<div>设备 <b>' + a.devices + '</b> ／ 尺寸 <b>' + App.editLevel.w + ' × ' + App.editLevel.h + '</b></div>');
     if (a.walls) lines.push('<div class="warn">这一关里还有 ' + a.walls + ' 格老式墙体（墙已经不用了，但老关卡仍然能玩）</div>');
+    const sol = App.editLevel.solution;
+    if (sol && sol.length) {
+      lines.push('<div class="good">✓ 已记录解法：<b>' + sol.length + '</b> 步（可回放验证）</div>');
+    } else {
+      lines.push('<div>解法：未记录</div>');
+    }
     if (!a.warnings.length) lines.push('<div class="good">✓ 数量一致，形状与目标配对正常</div>');
     a.warnings.forEach(function (w) { lines.push('<div class="warn">△ ' + w + '</div>'); });
     box.innerHTML = lines.join('');
@@ -906,6 +1064,8 @@
       '键盘：<b>1</b> 空地、<b>2</b> 正方形、<b>3</b> 圆形、<b>4</b> 方形目标、<b>5</b> 圆形目标、<b>0</b> 取消目标。',
       '<b>滚轮</b>：拿着设备时换它的朝向 / 状态；拿着<b>正方形 / 圆形 / 方形目标 / 圆形目标</b>时，在这四种之间循环。',
       '<b>S</b> = 一键试玩当前内容（不落库，按 <b>B</b> 回来继续画）。',
+      '<b>解法录制</b>：试玩通关后，通关横幅上会多一个「💾 记下这个解法」，点它就把这一局的点击序列存进关卡；' +
+        '之后在右栏「解法录制」里点「▶ 回放解法」，会自动重放一遍验证这一关确实可解（中途按 Esc / B 可中断）。',
       '<b>Ctrl+S</b> = 保存这一关并<b>自动新建下一关</b>，尺寸沿用当前关；当前关是空的就只保存不新建。',
       '改尺寸后没有任何外墙要铺：<b>棋盘外沿就是边界</b>。',
       '「导出 / 导入 JSON」「查看 / 编辑 JSON」都挪到了棋盘下面那一条；「关卡体检」会提示图形与目标数量是否配对。',
@@ -1179,6 +1339,9 @@
   function onKey(ev) {
     const k = String(ev.key || '').toLowerCase();
 
+    /* 回放解法时，Esc / B 先中断回放 */
+    if (App.replay && (k === 'escape' || k === 'b')) { App.replayStop(); return; }
+
     /* Esc：先关弹窗；编辑器里 = 放下笔刷；游玩里 = 返回选关 */
     if (k === 'escape') {
       if ($('modal') && $('modal').hidden === false) { App.closeModal(); return; }
@@ -1348,6 +1511,13 @@
     if ($('btn-win-again')) $('btn-win-again').addEventListener('click', App.restart);
     if ($('btn-win-next')) $('btn-win-next').addEventListener('click', function () { App.gotoLevel(1); });
     if ($('btn-win-select')) $('btn-win-select').addEventListener('click', App.gotoSelect);
+    if ($('btn-win-save-sol')) $('btn-win-save-sol').addEventListener('click', function () {
+      if (App.saveSolution() && $('btn-win-save-sol')) $('btn-win-save-sol').hidden = true;
+    });
+
+    /* 解法录制 */
+    if ($('btn-sol-replay')) $('btn-sol-replay').addEventListener('click', function () { App.runReplay(); });
+    if ($('btn-sol-clear')) $('btn-sol-clear').addEventListener('click', App.clearSolution);
 
     /* 大关管理 */
     if ($('btn-chapter-add')) $('btn-chapter-add').addEventListener('click', function () {
