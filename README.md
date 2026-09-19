@@ -138,6 +138,7 @@ device-puzzle/
 │  ├─ build-single.js    把 css/js（可选：关卡包）内联成单个 HTML
 │  ├─ check-single.ps1   用无头 Chrome（临时 profile）自检单文件版
 │  ├─ make-sample-bundle.js  造示例关卡包并校验每一关可解
+│  ├─ check-levels.js    体检关卡库：把「图形数 ≠ 同形状目标数」的死局挑出来（发布前跑一次）
 │  ├─ clean-library-file.js  清理关卡库文件里混进去的测试大关（先备份）
 │  └─ cleanup-library.html   浏览器里体检/清理被自检写进去的数据
 ├─ css/style.css
@@ -324,6 +325,8 @@ pwsh -File tools\publish-pages.ps1
 - Pages 的源目录是 **main 分支的 `/docs` 文件夹**（仓库 Settings → Pages，只需设一次）
 - `docs\` 里原来那两份设计文档（`规则细节.md`、`关卡格式与扩展.md`）不受影响，只有 `index.html` 是发布产物
 - **关卡改了要先导出**：编辑器 → 左栏「关卡包」→「导出整个关卡库」→ 覆盖项目根目录的 `关卡库.json`，脚本才会把新关卡打进线上版本
+- **导出后先体检一次**：`node tools\check-levels.js` —— 它会列出「图形数 ≠ 同形状目标数」的关，这些关数学上永远通不了（全绿才退出码 0）
 - `docs\index.html` 是**生成物，别手改** —— 下一次发布会被覆盖
 - `dist\` 按计划不进 git，所以线上产物只体现在 `docs\index.html` 这一份
+- 旧关卡库想留底：丢进 `backups\`（已被 `.gitignore` 挡住，也不会被打包脚本当成候选关卡包）
 
